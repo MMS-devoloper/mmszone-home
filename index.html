@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="bn">  
+<head>  
+<meta charset="utf-8">  
+<meta name="viewport" content="width=device-width,initial-scale=1">  
+<title>New tab</title>  
+<style>  
+/* Root variables */
+:root {
+  --bg: #0f1724;
+  --card: rgba(255, 255, 255, 0.06);
+  --muted: rgba(255, 255, 255, 0.65);
+  --accent: rgba(99, 102, 241, 0.9);
+  color: #e6eef8;
+}
+
+/* Body Design */
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background: linear-gradient(180deg, #071124 0%, var(--bg) 100%);
+  font-family: 'Segoe UI', sans-serif;
+  text-align: center;
+  overflow-x: hidden;
+  color: var(--color);
+}
+
+/* লোগো + হ্যালো */
+.logo-wrap{ position:relative; width:min(54vmin,240px); aspect-ratio:1/1.15; margin:8px auto 0; }  
+.halo{ position:absolute; inset:0; border-radius:32px; background:radial-gradient(60% 60% at 50% 40%, var(--blue,.10), transparent 70%); filter:blur(10px); animation: haloGlow 2s ease-in-out infinite alternate; }  
+.logo{ position:relative; width:100%; height:100%; object-fit:contain; z-index:1; filter: drop-shadow(0 18px 28px rgba(0,0,0,.18)) drop-shadow(0 3px 8px rgba(30,136,255,.25)); animation: float 2.25s ease-in-out infinite; }  
+@keyframes float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-8px) rotate(.5deg)}}  
+
+@keyframes haloGlow {  
+  0%,100% { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.05), transparent 70%); }
+  5%   { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.07), transparent 70%); }
+  10%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.09), transparent 70%); }
+  15%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.11), transparent 70%); }
+  20%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.13), transparent 70%); }
+  25%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.15), transparent 70%); }
+  30%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.17), transparent 70%); }
+  35%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.19), transparent 70%); }
+  40%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.21), transparent 70%); }
+  45%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.23), transparent 70%); }
+  50%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.25), transparent 70%); }
+  55%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.23), transparent 70%); }
+  60%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.21), transparent 70%); }
+  65%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.19), transparent 70%); }
+  70%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.17), transparent 70%); }
+  75%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.15), transparent 70%); }
+  80%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.13), transparent 70%); }
+  85%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.11), transparent 70%); }
+  90%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.09), transparent 70%); }
+  95%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.07), transparent 70%); }
+}  
+
+.title{ 
+  margin-top:16px;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:lowercase;
+  font-size:clamp(22px,4.5vmin,32px);
+  text-shadow:0 1px 0 rgba(255,255,255,.7),0 6px 18px rgba(30,136,255,.18);
+  color:#ffffff; /* ফুল সাদা */
+}  
+
+.search{ margin:18px auto 10px; width:min(640px,92vw); display:flex; gap:8px; }  
+.search input{
+  flex:1;
+  font-size:16px;
+  padding:14px 14px;
+  border-radius:16px;
+  border:1px solid #2a3448;
+  background:#1b2535;      /* ডার্ক ব্যাকগ্রাউন্ড */
+  color:#ffffff;            /* লেখা সাদা */
+  outline:none;
+  box-shadow:0 6px 18px rgba(0,0,0,.25);
+}
+.search button{
+  padding:12px 16px;
+  border-radius:14px;
+  border:0;
+  cursor:pointer;
+  font-weight:700;
+  background:linear-gradient(180deg,#2c98ff,#1876ff);
+  color:white;
+  box-shadow:0 10px 20px rgba(30,136,255,.35);
+  transition: transform 0.15s ease;
+}
+.search button:active, .tile:active { transform: scale(1.1); }  
+
+.grid{ margin:18px auto 0; width:min(760px,96vw); display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }  
+@media (min-width:520px){ .grid{ grid-template-columns:repeat(6,1fr); } }  
+
+.tile{ 
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  text-decoration:none;
+  color:#e6eef8;
+  padding:12px 8px;
+  border-radius:18px;
+  background:#1b2535;
+  border:1px solid #2a3448;
+  box-shadow:0 8px 20px rgba(0,0,0,.25);
+  transition: transform 0.15s ease, background .3s;
+}
+.tile:hover{ background:#253045; }
+
+.badge{
+  width:42px;height:42px;border-radius:50%;
+  display:grid;place-items:center;
+  font-weight:800;
+  border:1px solid #3a4560;
+  box-shadow:inset 0 0 0 6px #2b364b;
+  background:#101726;
+  color:#fff;
+}
+.tile small{opacity:.7}
+.g{background:transparent}
+</style>  
+</head>  
+<body>  
+<main class="wrap" role="main" aria-label="mmszone home">  
+  <div class="logo-wrap" aria-hidden="true">  
+    <div class="halo"></div>  
+    <img class="logo" src="mmszone-logo.png" alt="mmszone logo">  
+  </div>  
+  <div class="title">Kiwi browser</div>  
+
+  <form class="search" action="https://www.google.com/search" method="get">
+    <input id="q" name="q" type="text" placeholder="Search the web…" autocomplete="on">
+    <button type="submit">Search</button>
+  </form>
+
+<section class="grid" aria-label="Quick links">  
+  <a class="tile" href="https://www.google.com/" target="_self">  
+    <div class="badge g">
+      <img src="https://www.google.com/favicon.ico" alt="Google" width="24" height="24">
+    </div>
+    <div>Google</div><small>google.com</small>  
+  </a>  
+
+ <a class="tile" href="https://m.youtube.com/" target="_self">    
+  <div class="badge g" style="display:flex; align-items:center; justify-content:center;">  
+    <img src="https://static.vecteezy.com/system/resources/previews/047/580/461/non_2x/youtube-popular-social-media-logo-free-png.png" alt="YouTube" width="36" height="36">  
+  </div>  
+  <div>YouTube</div><small>youtube.com</small>    
+</a>
+
+</a>
+  <a class="tile" href="https://m.facebook.com/" target="_self">  
+    <div class="badge g">
+      <img src="https://www.facebook.com/favicon.ico" alt="Facebook" width="24" height="24">
+    </div>
+    <div>Facebook</div><small>facebook.com</small>  
+  </a>    
+
+  <a class="tile" href="https://web.whatsapp.com/" target="_self">  
+    <div class="badge g">
+      <img src="https://static.whatsapp.net/rsrc.php/v3/yP/r/rYZqPCBaG70.png" alt="WhatsApp" width="24" height="24">
+    </div>
+    <div>WhatsApp</div><small>web.whatsapp.com</small>  
+  </a>  
+
+  <a class="tile" href="https://mail.google.com/" target="_self">  
+    <div class="badge g">
+      <img src="https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico" alt="Gmail" width="24" height="24">
+    </div>
+    <div>Gmail</div><small>mail.google.com</small>  
+  </a>  
+
+  <a class="tile" href="https://bn.m.wikipedia.org/" target="_self">  
+    <div class="badge g">
+      <img src="https://bn.m.wikipedia.org/favicon.ico" alt="Wikipedia" width="24" height="24">
+    </div>
+    <div>Wikipedia</div><small>wikipedia.org</small>  
+  </a>  
+
+
+  <a class="tile" href="javascript:(function(){var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/eruda';document.body.appendChild(s);s.onload=function(){eruda.init();};})();" target="_self">  
+  <div class="badge g">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#5f6368">
+      <path d="M19.14,12.94a7.14,7.14,0,0,0,0-1.88l2.11-1.65a.5.5,0,0,0,.12-.65l-2-3.46a.5.5,0,0,0-.61-.22l-2.49,1a6.89,6.89,0,0,0-1.63-.95l-.38-2.65A.5.5,0,0,0,13.78,2H10.22a.5.5,0,0,0-.5.43L9.34,5.08a6.89,6.89,0,0,0-1.63.95l-2.49-1a.5.5,0,0,0-.61.22l-2,3.46a.5.5,0,0,0,.12.65L4.86,11.06a7.14,7.14,0,0,0,0,1.88l-2.11,1.65a.5.5,0,0,0-.12.65l2,3.46a.5.5,0,0,0,.61.22l2.49-1a6.89,6.89,0,0,0,1.63.95l.38,2.65a.5.5,0,0,0,.5.43h3.56a.5.5,0,0,0,.5-.43l.38-2.65a6.89,6.89,0,0,0,1.63-.95l2.49,1a.5.5,0,0,0,.61-.22l2-3.46a.5.5,0,0,0-.12-.65Zm-7.14,2.56A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"/>
+    </svg>
+  </div>
+  <div>Tools</div>
+  <small>DevTools</small>  
+</a>
