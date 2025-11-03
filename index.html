@@ -479,15 +479,33 @@ body {
 
   // লগইন স্টেট অনুযায়ী বাটনের টেক্সট পরিবর্তন
   onAuthStateChanged(auth, (user) => {
-    if (user) {
-      const name = user.displayName || user.email || 'User';
-      loginBtn.textContent = `Logout • ${name}`;
-      loginBtn.setAttribute('title', name);
-    } else {
-      loginBtn.textContent = 'Login';
-      loginBtn.removeAttribute('title');
-    }
-  });
+  if (user) {
+    const name = user.displayName || user.email || 'User';
+    const photo = user.photoURL;
+
+    // প্রোফাইল ছবি দেখানো
+    loginBtn.innerHTML = `
+      <img src="${photo}" alt="${name}" 
+           style="width:28px;height:28px;border-radius:50%;vertical-align:middle;">
+    `;
+    loginBtn.title = name;
+
+    // Logout এর কাজ রাখবো ক্লিক ইভেন্টেই
+    loginBtn.onclick = async () => {
+      try { await signOut(auth); } 
+      catch (err) { alert('Logout failed: ' + err.message); }
+    };
+
+  } else {
+    // লগআউট বা লগইন না থাকলে আগের মতো Login বাটন দেখাবে
+    loginBtn.innerHTML = 'Login';
+    loginBtn.title = '';
+    loginBtn.onclick = async () => {
+      try { await signInWithPopup(auth, provider); } 
+      catch (err) { alert('Login failed: ' + err.message); }
+    };
+  }
+});
 </script>
 
 </body>
