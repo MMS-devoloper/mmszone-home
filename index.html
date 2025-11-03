@@ -483,22 +483,34 @@ body {
     const name = user.displayName || user.email || 'User';
     const photo = user.photoURL;
 
-    // প্রোফাইল ছবি দেখানো
     loginBtn.innerHTML = `
       <img src="${photo}" alt="${name}" 
-           style="width:28px;height:28px;border-radius:50%;vertical-align:middle;">
+           style="
+             width:36px;
+             height:36px;
+             border-radius:50%;
+             object-fit:cover;
+             display:block;
+             border:2px solid rgba(255,255,255,0.5);
+             box-shadow:0 0 8px rgba(0,0,0,0.3);
+           ">
     `;
+    loginBtn.style.background = 'transparent';
+    loginBtn.style.padding = '0';
+    loginBtn.style.border = 'none';
     loginBtn.title = name;
 
-    // Logout এর কাজ রাখবো ক্লিক ইভেন্টেই
+    // ক্লিক করলে লগআউট
     loginBtn.onclick = async () => {
       try { await signOut(auth); } 
       catch (err) { alert('Logout failed: ' + err.message); }
     };
-
   } else {
     // লগআউট বা লগইন না থাকলে আগের মতো Login বাটন দেখাবে
-    loginBtn.innerHTML = 'Login';
+    loginBtn.textContent = 'Login';
+    loginBtn.style.background = 'linear-gradient(180deg, #2c98ff, #1876ff)';
+    loginBtn.style.border = 'none';
+    loginBtn.style.padding = '10px 14px';
     loginBtn.title = '';
     loginBtn.onclick = async () => {
       try { await signInWithPopup(auth, provider); } 
