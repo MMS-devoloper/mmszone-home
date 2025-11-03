@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="bn">  
+<head>  
+<meta charset="utf-8">  
+<meta name="viewport" content="width=device-width,initial-scale=1">  
+<title>New tab</title>  
+<style>  
+/* Root variables */
+:root {
+  --bg: #0f1724;
+  --card: rgba(255, 255, 255, 0.06);
+  --muted: rgba(255, 255, 255, 0.65);
+  --accent: rgba(99, 102, 241, 0.9);
+  color: #e6eef8;
+}
+
+/* Body Design */
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background: linear-gradient(180deg, #071124 0%, var(--bg) 100%);
+  font-family: 'Segoe UI', sans-serif;
+  text-align: center;
+  overflow-x: hidden;
+  color: var(--color);
+}
+
+/* লোগো + হ্যালো */
+.logo-wrap{ position:relative; width:min(54vmin,240px); aspect-ratio:1/1.15; margin:8px auto 0; }  
+.halo{ position:absolute; inset:0; border-radius:32px; background:radial-gradient(60% 60% at 50% 40%, var(--blue,.10), transparent 70%); filter:blur(10px); animation: haloGlow 2s ease-in-out infinite alternate; }  
+.logo{ position:relative; width:100%; height:100%; object-fit:contain; z-index:1; filter: drop-shadow(0 18px 28px rgba(0,0,0,.18)) drop-shadow(0 3px 8px rgba(30,136,255,.25)); animation: float 2.25s ease-in-out infinite; }  
+@keyframes float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-8px) rotate(.5deg)}}  
+
+@keyframes haloGlow {  
+  0%,100% { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.05), transparent 70%); }
+  5%   { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.07), transparent 70%); }
+  10%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.09), transparent 70%); }
+  15%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.11), transparent 70%); }
+  20%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.13), transparent 70%); }
+  25%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.15), transparent 70%); }
+  30%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.17), transparent 70%); }
+  35%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.19), transparent 70%); }
+  40%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.21), transparent 70%); }
+  45%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.23), transparent 70%); }
+  50%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.25), transparent 70%); }
+  55%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.23), transparent 70%); }
+  60%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.21), transparent 70%); }
+  65%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.19), transparent 70%); }
+  70%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.17), transparent 70%); }
+  75%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.15), transparent 70%); }
+  80%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.13), transparent 70%); }
+  85%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.11), transparent 70%); }
+  90%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.09), transparent 70%); }
+  95%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.07), transparent 70%); }
+}  
+
+.title{ 
+  margin-top:16px;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:lowercase;
+  font-size:clamp(22px,4.5vmin,32px);
+  text-shadow:0 1px 0 rgba(255,255,255,.7),0 6px 18px rgba(30,136,255,.18);
+  color:#ffffff; /* ফুল সাদা */
+}  
+
+.search{ margin:18px auto 10px; width:min(640px,92vw); display:flex; gap:8px; position:relative; }  
+.search input{
+  flex:1;
+  font-size:16px;
+  padding:14px 14px;
+  border-radius:16px;
+  border:1px solid #2a3448;
+  background:#1b2535;      /* ডার্ক ব্যাকগ্রাউন্ড */
+  color:#ffffff;            /* লেখা সাদা */
+  outline:none;
+  box-shadow:0 6px 18px rgba(0,0,0,.25);
+}
+.search button{
+  padding:12px 16px;
+  border-radius:14px;
+  border:0;
+  cursor:pointer;
+  font-weight:700;
+  background:linear-gradient(180deg,#2c98ff,#1876ff);
+  color:white;
+  box-shadow:0 10px 20px rgba(30,136,255,.35);
+  transition: transform 0.15s ease;
+}
+.search button:active, .tile:active { transform: scale(1.1); }  
+
+/* suggestion box */
+.suggestions {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 8px);
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: linear-gradient(180deg, rgba(30,35,50,0.98), rgba(20,24,36,0.98));
+  border-radius: 12px;
+  border: 1px solid rgba(60,72,96,0.6);
+  max-height: 260px;
+  overflow: auto;
+  box-shadow: 0 10px 30px rgba(3,10,22,0.6);
+  z-index: 40;
+}
+.suggestions li{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  padding:8px 10px;
+  color:#e6eef8;
+  cursor:pointer;
+  border-radius:8px;
+}
+.suggestions li:hover, .suggestions li.active {
+  background: rgba(255,255,255,0.03);
+}
+.suggestions li .num { opacity:0.6; font-size:12px; width:28px; text-align:center; }
+
+/* grid & tiles */
+.grid{ margin:18px auto 0; width:min(760px,96vw); display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }  
+@media (min-width:520px){ .grid{ grid-template-columns:repeat(6,1fr); } }  
+
+.tile{ 
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  text-decoration:none;
+  color:#e6eef8;
+  padding:12px 8px;
+  border-radius:18px;
+  background:#1b2535;
+  border:1px solid #2a3448;
+  box-shadow:0 8px 20px rgba(0,0,0,.25);
+  transition: transform 0.15s ease, background .3s;
+}
+.tile:hover{ background:#253045; }
+
+.badge{
+  width:42px;height:42px;border-radius:50%;
+  display:grid;place-items:center;
+  font-weight:800;
+  border:1px solid #3a4560;
+  box-shadow:inset 0 0 0 6px #2b364b;
+  background:#101726;
+  color:#fff;
+}
+.tile small{opacity:.7}
+.g{background:transparent}
+
+/* ====== ADDED: Login button styles ====== */
+.topbar {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  z-index: 100;
+}
+.login-btn {
+  background: linear-gradient(180deg, #2c98ff, #1876ff);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  padding: 10px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(30,136,255,0.4);
+  transition: all 0.18s ease;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+}
+.login-btn:hover { transform: scale(1.04); }
+.login-btn:active { transform: scale(0.96); }
+</style>  
+</head>  
+<body>  
+
+<!-- ====== ADDED: top-right login button ====== -->
+<header class="topbar" aria-hidden="false">
+  <button id="loginBtn" class="login-btn" type="button">Login</button>
+</header>
+
+<main class="wrap" role="main" aria-label="mmszone home">  
+  <div class="logo-wrap" aria-hidden="true">  
+    <div class="halo"></div>  
+    <img class="logo" src="mmszone-logo.png" alt="mmszone logo">  
+  </div>  
+  <div class="title">Kiwi browser</div>  
+
+  <form id="searchForm" class="search" action="https://www.google.com/search" method="get" autocomplete="off" role="search">
+    <input id="q" name="q" type="text" placeholder="Search URL or web on Google…" autocomplete="off" spellcheck="false" aria-autocomplete="list" aria-controls="suggestionsList">
+    <button type="submit">Search</button>
+
+    <!-- suggestion list -->
+    <ul id="suggestionsList" class="suggestions" role="listbox" hidden></ul>
+  </form>
+
+<section class="grid" aria-label="Quick links">  
+  <a class="tile" href="https://www.google.com/" target="_self">  
+    <div class="badge g">
+      <img src="https://www.google.com/favicon.ico" alt="Google" width="24" height="24">
+    </div>
+    <div>Google</div><small>google.com</small>  
+  </a>  
+
+ <a class="tile" href="https://m.youtube.com/" target="_self">    
+  <div class="badge g" style="display:flex; align-items:center; justify-content:center;">  
+    <img src="https://static.vecteezy.com/system/resources/previews/047/580/461/non_2x/youtube-popular-social-media-logo-free-png.png" alt="YouTube" width="36" height="36">  
+  </div>  
+  <div>YouTube</div><small>youtube.com</small>    
+</a>
+
+  <a class="tile" href="https://m.facebook.com/" target="_self">  
+    <div class="badge g">
+      <img src="https://www.facebook.com/favicon.ico" alt="Facebook" width="24" height="24">
+    </div>
+    <div>Facebook</div><small>facebook.com</small>  
+  </a>    
+
+  <a class="tile" href="https://web.whatsapp.com/" target="_self">  
+    <div class="badge g">
+      <img src="https://static.whatsapp.net/rsrc.php/v3/yP/r/rYZqPCBaG70.png" alt="WhatsApp" width="24" height="24">
+    </div>
+    <div>WhatsApp</div><small>web.whatsapp.com</small>  
+  </a>  
+
+  <a class="tile" href="https://mail.google.com/" target="_self">  
+    <div class="badge g">
+      <img src="https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico" alt="Gmail" width="24" height="24">
+    </div>
+    <div>Gmail</div><small>mail.google.com</small>  
+  </a>  
+
+  <a class="tile" href="https://bn.m.wikipedia.org/" target="_self">  
+    <div class="badge g">
+      <img src="https://bn.m.wikipedia.org/favicon.ico" alt="Wikipedia" width="24" height="24">
+    </div>
+    <div>Wikipedia</div><small>wikipedia.org</small>  
+  </a>  
+
+
+  <a class="tile" href="javascript:(function(){var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/eruda';document.body.appendChild(s);s.onload=function(){eruda.init();};})();" target="_self">  
+  <div class="badge g">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#5f6368">
+      <path d="M19.14,12.94a7.14,7.14,0,0,0,0-1.88l2.11-1.65a.5.5,0,0,0,.12-.65l-2-3.46a.5.5,0,0,0-.61-.22l-2.49,1a6.89,6.89,0,0,0-1.63-.95l-.38-2.65A.5.5,0,0,0,13.78,2H10.22a.5.5,0,0,0-.5.43L9.34,5.08a6.89,6.89,0,0,0-1.63.95l-2.49-1a.5.5,0,0,0-.61.22l-2,3.46a.5.5,0,0,0,.12.65L4.86,11.06a7.14,7.14,0,0,0,0,1.88l-2.11,1.65a.5.5,0,0,0-.12.65l2,3.46a.5.5,0,0,0,.61.22l2.49-1a6.89,6.89,0,0,0,1.63.95l.38,2.65a.5.5,0,0,0,.5.43h3.56a.5.5,0,0,0,.5-.43l.38-2.65a6.89,6.89,0,0,0,1.63-.95l2.49,1a.5.5,0,0,0,.61-.22l2-3.46a.5.5,0,0,0-.12-.65Zm-7.14,2.56A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"/>
+    </svg>
+  </div>
+  <div>Tools</div>
+  <small>DevTools</small>  
+</a>
+
+</section>
+</main>  
+
+<!-- ----------------- Google-suggest JSONP + UI script ----------------- -->
+<script>
+(function(){
+  'use strict';
+
+  const input = document.getElementById('q');
+  const sugList = document.getElementById('suggestionsList');
+  const form = document.getElementById('searchForm');
+
+  let debounceTimer = null;
+  let lastCallbackName = null;
+  let activeIndex = -1;
+  let latestQuery = '';
+
+  // debounce helper
+  function debounce(fn, delay){
+    return function(...args){
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(()=> fn.apply(this, args), delay);
+    }
+  }
+
+  // clear suggestions
+  function clearSuggestions(){
+    sugList.innerHTML = '';
+    sugList.hidden = true;
+    activeIndex = -1;
+  }
+
+  // render suggestions array
+  function showSuggestions(arr){
+    sugList.innerHTML = '';
+    if(!arr || !arr.length){ clearSuggestions(); return; }
+    arr.forEach((text, i) => {
+      const li = document.createElement('li');
+      li.setAttribute('role','option');
+      li.dataset.index = i;
+      li.innerHTML = '<span class="num">'+(i+1)+'</span><span class="txt">'+escapeHtml(text)+'</span>';
+      li.addEventListener('click', ()=>{
+        input.value = text;
+        clearSuggestions();
+        form.submit();
+      });
+      sugList.appendChild(li);
+    });
+    sugList.hidden = false;
+  }
+
+  // escape to be safe
+  function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  // keyboard support
+  input.addEventListener('keydown', function(e){
+    const items = sugList.querySelectorAll('li');
+    if(sugList.hidden) return;
+    if(e.key === 'ArrowDown'){
+      e.preventDefault();
+      activeIndex = Math.min(activeIndex + 1, items.length - 1);
+      updateActive(items);
+    } else if(e.key === 'ArrowUp'){
+      e.preventDefault();
+      activeIndex = Math.max(activeIndex - 1, 0);
+      updateActive(items);
+    } else if(e.key === 'Enter'){
+      if(activeIndex >= 0 && items[activeIndex]){
+        e.preventDefault();
+        const txt = items[activeIndex].querySelector('.txt').textContent;
+        input.value = txt;
+        clearSuggestions();
+        form.submit();
+      }
+    } else if(e.key === 'Escape'){
+      clearSuggestions();
+    }
+  });
+
+  function updateActive(items){
+    items.forEach(it => it.classList.remove('active'));
+    if(activeIndex >= 0 && items[activeIndex]){
+      items[activeIndex].classList.add('active');
+      // ensure visible
+      items[activeIndex].scrollIntoView({block:'nearest'});
+    }
+  }
+
+  // JSONP callback cleanup
+  function cleanupCallback(cbName, scriptEl){
+    try{
+      delete window[cbName];
+    }catch(e){
+      window[cbName] = undefined;
+    }
+    if(scriptEl && scriptEl.parentNode) scriptEl.parentNode.removeChild(scriptEl);
+    lastCallbackName = null;
+  }
+
+  // request suggestions via JSONP
+  function requestSuggestions(query){
+    // small safety: if query empty hide
+    if(!query || query.trim().length === 0){
+      clearSuggestions();
+      return;
+    }
+    latestQuery = query;
+
+    // prepare unique callback name
+    const cbName = 'gs_cb_' + Date.now() + '_' + Math.floor(Math.random()*1000);
+    lastCallbackName = cbName;
+
+    // create global callback
+    window[cbName] = function(data){
+      // expected data: [query, [sug1,sug2,...], ...]
+      try{
+        const suggestions = (Array.isArray(data) && Array.isArray(data[1])) ? data[1] : [];
+        // ensure the response matches the latest query (best-effort)
+        showSuggestions(suggestions);
+      }catch(err){
+        clearSuggestions();
+      } finally {
+        // cleanup
+        cleanupCallback(cbName, scriptEl);
+      }
+    };
+
+    // JSONP url (use google complete)
+    const url = 'https://www.google.com/complete/search?client=firefox&callback=' + cbName + '&q=' + encodeURIComponent(query);
+
+    // inject script tag
+    const scriptEl = document.createElement('script');
+    scriptEl.src = url;
+    scriptEl.onerror = function(){
+      // if JSONP fails (blocked), show fallback empty or message
+      cleanupCallback(cbName, scriptEl);
+      // fallback: try suggestqueries domain as alternative
+      const alt = document.createElement('script');
+      alt.src = 'https://suggestqueries.google.com/complete/search?client=firefox&callback=' + cbName + '&q=' + encodeURIComponent(query);
+      alt.onerror = function(){
+        cleanupCallback(cbName, alt);
+        // final fallback: no suggestions
+        clearSuggestions();
+      }
+      document.body.appendChild(alt);
+    };
+
+    document.body.appendChild(scriptEl);
+  }
+
+  // debounce the network calls
+  const debouncedRequest = debounce(function(){
+    requestSuggestions(input.value.trim());
+  }, 180);
+
+  // on input events
+  input.addEventListener('input', function(e){
+    activeIndex = -1;
+    debouncedRequest();
+  });
+
+  // click outside closes suggestions
+  document.addEventListener('click', function(e){
+    if(!document.getElementById('searchForm').contains(e.target)){
+      clearSuggestions();
+    }
+  });
+
+  // accessibility: aria-activedescendant not handled here but listbox role set
+  // initial: hide suggestions
+  clearSuggestions();
+
+  // small note: prevent form submit when using suggestion keyboard selection unless enter used
+  form.addEventListener('submit', function(e){
+    // default will go to Google search with q param
+    // nothing to block
+  });
+
+})();
+</script>
+
+<!-- ====== Firebase Google Login (module) ====== -->
+<script type="module">
+  // Firebase JS SDK v10 (module)
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } 
+    from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
+
+  // তোমার Firebase project config
+  const firebaseConfig = {
+    apiKey: "AIzaSyD7sZQDSeGYRmXj1v2MD8OB4OtpxZNgY9Q",
+    authDomain: "kiwi-brower-user.firebaseapp.com",
+    projectId: "kiwi-brower-user",
+    storageBucket: "kiwi-brower-user.firebasestorage.app",
+    messagingSenderId: "221131749871",
+    appId: "1:221131749871:web:8ea207da21e9b7aec3de1a",
+    measurementId: "G-Z6P6NNLX64"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+
+  const loginBtn = document.getElementById('loginBtn');
+
+  // ক্লিক করলে লগইন বা লগআউট
+  loginBtn.addEventListener('click', async () => {
+    const user = auth.currentUser;
+    try {
+      if (user) {
+        await signOut(auth);
+      } else {
+        await signInWithPopup(auth, provider);
+      }
+    } catch (err) {
+      console.error('Auth error:', err);
+      alert('Login failed: ' + (err.message || err));
+    }
+  });
+
+  // লগইন স্টেট অনুযায়ী বাটনের টেক্সট পরিবর্তন
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      const name = user.displayName || user.email || 'User';
+      loginBtn.textContent = `Logout • ${name}`;
+      loginBtn.setAttribute('title', name);
+    } else {
+      loginBtn.textContent = 'Login';
+      loginBtn.removeAttribute('title');
+    }
+  });
+</script>
+
+</body>
+</html>
