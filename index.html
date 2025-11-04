@@ -438,6 +438,65 @@ body {
 })();
 </script>
 
+<!-- ================== 🔍 LocalStorage ভিত্তিক সাজেশন সিস্টেম ================== -->
+<script>
+(function(){
+  const input = document.getElementById('q');
+  const form = document.getElementById('searchForm');
+  const sugList = document.getElementById('suggestionsList');
+
+  // লোকাল হিস্টরি লোড করা
+  function getHistory(){
+    try{
+      return JSON.parse(localStorage.getItem('searchHistory') || '[]');
+    }catch(e){ return []; }
+  }
+
+  // হিস্টরি সেভ করা
+  function saveHistory(term){
+    if(!term.trim()) return;
+    let history = getHistory();
+    history = history.filter(x => x.toLowerCase() !== term.toLowerCase());
+    history.unshift(term);
+    if(history.length > 20) history = history.slice(0,20);
+    localStorage.setItem('searchHistory', JSON.stringify(history));
+  }
+
+  function showSuggestions(list){
+    sugList.innerHTML = '';
+    if(!list.length){ 
+      sugList.hidden = true; 
+      return; 
+    }
+    list.forEach(text => {
+      const li = document.createElement('li');
+      li.textContent = text;
+      li.onclick = ()=>{ 
+        input.value = text; 
+        form.submit(); 
+      };
+      sugList.appendChild(li);
+    });
+    sugList.hidden = false;
+  }
+
+  input.addEventListener('input', ()=>{
+    const val = input.value.trim().toLowerCase();
+    const history = getHistory().filter(t => t.toLowerCase().includes(val));
+    showSuggestions(history);
+  });
+
+  form.addEventListener('submit', ()=>{
+    const term = input.value.trim();
+    saveHistory(term);
+  });
+
+  document.addEventListener('click', (e)=>{
+    if(!form.contains(e.target)) sugList.hidden = true;
+  });
+})();
+</script>
+
 <!-- ====== Firebase Google Login (module) ====== -->
 <script type="module">
   // Firebase JS SDK v10 (module)
