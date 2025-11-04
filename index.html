@@ -260,40 +260,46 @@ body {
 </section>
 </main>  
 
-<!-- ----------------- Google-suggest JSONP + UI script ----------------- -->
+<!-- ================== 🔍 Combined LocalStorage + Google Suggestions ================== -->
 <script>
 (function(){
-  'use strict';
-
   const input = document.getElementById('q');
-  const sugList = document.getElementById('suggestionsList');
   const form = document.getElementById('searchForm');
+  const sugList = document.getElementById('suggestionsList');
 
   let debounceTimer = null;
   let lastCallbackName = null;
   let activeIndex = -1;
-  let latestQuery = '';
 
-  // debounce helper
-  function debounce(fn, delay){
-    return function(...args){
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(()=> fn.apply(this, args), delay);
-    }
+  // LocalStorage history
+  function getHistory(){
+    try { return JSON.parse(localStorage.getItem('searchHistory') || '[]'); }
+    catch(e) { return []; }
+  }
+  function saveHistory(term){
+    if(!term.trim()) return;
+    let history = getHistory().filter(x => x.toLowerCase() !== term.toLowerCase());
+    history.unshift(term);
+    if(history.length > 20) history = history.slice(0,20);
+    localStorage.setItem('searchHistory', JSON.stringify(history));
   }
 
-  // clear suggestions
+  // Escape HTML for safety
+  function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  // Clear suggestions
   function clearSuggestions(){
     sugList.innerHTML = '';
     sugList.hidden = true;
     activeIndex = -1;
   }
 
-  // render suggestions array
-  function showSuggestions(arr){
+  // Merge and show suggestions (local + Google)
+  function showSuggestions(list){
     sugList.innerHTML = '';
-    if(!arr || !arr.length){ clearSuggestions(); return; }
-    arr.forEach((text, i) => {
+    if(!list.length){ clearSuggestions(); return; }
+
+    list.forEach((text, i) => {
       const li = document.createElement('li');
       li.setAttribute('role','option');
       li.dataset.index = i;
@@ -308,192 +314,70 @@ body {
     sugList.hidden = false;
   }
 
-  // escape to be safe
-  function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-  // keyboard support
-  input.addEventListener('keydown', function(e){
-    const items = sugList.querySelectorAll('li');
-    if(sugList.hidden) return;
-    if(e.key === 'ArrowDown'){
-      e.preventDefault();
-      activeIndex = Math.min(activeIndex + 1, items.length - 1);
-      updateActive(items);
-    } else if(e.key === 'ArrowUp'){
-      e.preventDefault();
-      activeIndex = Math.max(activeIndex - 1, 0);
-      updateActive(items);
-    } else if(e.key === 'Enter'){
-      if(activeIndex >= 0 && items[activeIndex]){
-        e.preventDefault();
-        const txt = items[activeIndex].querySelector('.txt').textContent;
-        input.value = txt;
-        clearSuggestions();
-        form.submit();
-      }
-    } else if(e.key === 'Escape'){
-      clearSuggestions();
-    }
-  });
-
+  // Keyboard navigation
   function updateActive(items){
     items.forEach(it => it.classList.remove('active'));
-    if(activeIndex >= 0 && items[activeIndex]){
+    if(activeIndex >=0 && items[activeIndex]) {
       items[activeIndex].classList.add('active');
-      // ensure visible
       items[activeIndex].scrollIntoView({block:'nearest'});
     }
   }
+  input.addEventListener('keydown', function(e){
+    const items = sugList.querySelectorAll('li');
+    if(sugList.hidden) return;
 
-  // JSONP callback cleanup
-  function cleanupCallback(cbName, scriptEl){
-    try{
-      delete window[cbName];
-    }catch(e){
-      window[cbName] = undefined;
+    if(e.key==='ArrowDown'){ e.preventDefault(); activeIndex=Math.min(activeIndex+1, items.length-1); updateActive(items); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); activeIndex=Math.max(activeIndex-1,0); updateActive(items); }
+    else if(e.key==='Enter'){ 
+      if(activeIndex>=0 && items[activeIndex]) { e.preventDefault(); input.value=items[activeIndex].querySelector('.txt').textContent; clearSuggestions(); form.submit(); }
     }
-    if(scriptEl && scriptEl.parentNode) scriptEl.parentNode.removeChild(scriptEl);
-    lastCallbackName = null;
-  }
+    else if(e.key==='Escape'){ clearSuggestions(); }
+  });
 
-  // request suggestions via JSONP
-  function requestSuggestions(query){
-    // small safety: if query empty hide
-    if(!query || query.trim().length === 0){
-      clearSuggestions();
-      return;
-    }
-    latestQuery = query;
+  // JSONP Google suggestions
+  function requestGoogleSuggestions(query){
+    if(!query || !query.trim()){ return; }
 
-    // prepare unique callback name
-    const cbName = 'gs_cb_' + Date.now() + '_' + Math.floor(Math.random()*1000);
+    const cbName = 'gs_cb_'+Date.now()+'_'+Math.floor(Math.random()*1000);
     lastCallbackName = cbName;
 
-    // create global callback
     window[cbName] = function(data){
-      // expected data: [query, [sug1,sug2,...], ...]
-      try{
-        const suggestions = (Array.isArray(data) && Array.isArray(data[1])) ? data[1] : [];
-        // ensure the response matches the latest query (best-effort)
-        showSuggestions(suggestions);
-      }catch(err){
-        clearSuggestions();
-      } finally {
-        // cleanup
-        cleanupCallback(cbName, scriptEl);
-      }
+      let googleSugs = (Array.isArray(data) && Array.isArray(data[1])) ? data[1] : [];
+      // Merge with local suggestions (remove duplicates)
+      const localSugs = getHistory().filter(t => t.toLowerCase().includes(query.toLowerCase()));
+      const merged = [...new Set([...localSugs, ...googleSugs])].slice(0,20);
+      showSuggestions(merged);
+
+      // cleanup
+      try{ delete window[cbName]; } catch(e){ window[cbName]=undefined; }
+      if(scriptEl && scriptEl.parentNode) scriptEl.parentNode.removeChild(scriptEl);
     };
 
-    // JSONP url (use google complete)
-    const url = 'https://www.google.com/complete/search?client=firefox&callback=' + cbName + '&q=' + encodeURIComponent(query);
-
-    // inject script tag
     const scriptEl = document.createElement('script');
-    scriptEl.src = url;
-    scriptEl.onerror = function(){
-      // if JSONP fails (blocked), show fallback empty or message
-      cleanupCallback(cbName, scriptEl);
-      // fallback: try suggestqueries domain as alternative
-      const alt = document.createElement('script');
-      alt.src = 'https://suggestqueries.google.com/complete/search?client=firefox&callback=' + cbName + '&q=' + encodeURIComponent(query);
-      alt.onerror = function(){
-        cleanupCallback(cbName, alt);
-        // final fallback: no suggestions
-        clearSuggestions();
-      }
-      document.body.appendChild(alt);
-    };
-
+    scriptEl.src = 'https://www.google.com/complete/search?client=firefox&callback='+cbName+'&q='+encodeURIComponent(query);
     document.body.appendChild(scriptEl);
   }
 
-  // debounce the network calls
-  const debouncedRequest = debounce(function(){
-    requestSuggestions(input.value.trim());
-  }, 180);
+  // Debounce input
+  function debounce(fn,delay){ return function(...args){ clearTimeout(debounceTimer); debounceTimer=setTimeout(()=>fn.apply(this,args),delay); } }
+  const debouncedRequest = debounce(()=>{ requestGoogleSuggestions(input.value.trim()); }, 180);
 
-  // on input events
-  input.addEventListener('input', function(e){
-    activeIndex = -1;
+  // Input event
+  input.addEventListener('input', ()=>{
+    activeIndex=-1;
     debouncedRequest();
   });
 
-  // click outside closes suggestions
-  document.addEventListener('click', function(e){
-    if(!document.getElementById('searchForm').contains(e.target)){
-      clearSuggestions();
-    }
-  });
-
-  // accessibility: aria-activedescendant not handled here but listbox role set
-  // initial: hide suggestions
-  clearSuggestions();
-
-  // small note: prevent form submit when using suggestion keyboard selection unless enter used
-  form.addEventListener('submit', function(e){
-    // default will go to Google search with q param
-    // nothing to block
-  });
-
-})();
-</script>
-
-<!-- ================== 🔍 LocalStorage ভিত্তিক সাজেশন সিস্টেম ================== -->
-<script>
-(function(){
-  const input = document.getElementById('q');
-  const form = document.getElementById('searchForm');
-  const sugList = document.getElementById('suggestionsList');
-
-  // লোকাল হিস্টরি লোড করা
-  function getHistory(){
-    try{
-      return JSON.parse(localStorage.getItem('searchHistory') || '[]');
-    }catch(e){ return []; }
-  }
-
-  // হিস্টরি সেভ করা
-  function saveHistory(term){
-    if(!term.trim()) return;
-    let history = getHistory();
-    history = history.filter(x => x.toLowerCase() !== term.toLowerCase());
-    history.unshift(term);
-    if(history.length > 20) history = history.slice(0,20);
-    localStorage.setItem('searchHistory', JSON.stringify(history));
-  }
-
-  function showSuggestions(list){
-    sugList.innerHTML = '';
-    if(!list.length){ 
-      sugList.hidden = true; 
-      return; 
-    }
-    list.forEach(text => {
-      const li = document.createElement('li');
-      li.textContent = text;
-      li.onclick = ()=>{ 
-        input.value = text; 
-        form.submit(); 
-      };
-      sugList.appendChild(li);
-    });
-    sugList.hidden = false;
-  }
-
-  input.addEventListener('input', ()=>{
-    const val = input.value.trim().toLowerCase();
-    const history = getHistory().filter(t => t.toLowerCase().includes(val));
-    showSuggestions(history);
-  });
-
+  // Form submit saves to local
   form.addEventListener('submit', ()=>{
-    const term = input.value.trim();
-    saveHistory(term);
+    saveHistory(input.value.trim());
   });
 
+  // Click outside closes suggestions
   document.addEventListener('click', (e)=>{
-    if(!form.contains(e.target)) sugList.hidden = true;
+    if(!form.contains(e.target)) clearSuggestions();
   });
+
 })();
 </script>
 
