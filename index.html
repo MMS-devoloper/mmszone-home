@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="bn">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>New tab</title>
-<style>
+<html lang="bn">  
+<head>  
+<meta charset="utf-8">  
+<meta name="viewport" content="width=device-width,initial-scale=1">  
+<title>New tab</title>  
+<style>  
 /* Root variables */
 :root {
   --bg: #0f1724;
@@ -31,12 +31,12 @@ body {
 }
 
 /* লোগো + হ্যালো */
-.logo-wrap{ position:relative; width:min(54vmin,240px); aspect-ratio:1/1.15; margin:8px auto 0; }
-.halo{ position:absolute; inset:0; border-radius:32px; background:radial-gradient(60% 60% at 50% 40%, var(--blue,.10), transparent 70%); filter:blur(10px); animation: haloGlow 2s ease-in-out infinite alternate; }
-.logo{ position:relative; width:100%; height:100%; object-fit:contain; z-index:1; filter: drop-shadow(0 18px 28px rgba(0,0,0,.18)) drop-shadow(0 3px 8px rgba(30,136,255,.25)); animation: float 2.25s ease-in-out infinite; }
-@keyframes float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-8px) rotate(.5deg)}}
+.logo-wrap{ position:relative; width:min(54vmin,240px); aspect-ratio:1/1.15; margin:8px auto 0; }  
+.halo{ position:absolute; inset:0; border-radius:32px; background:radial-gradient(60% 60% at 50% 40%, var(--blue,.10), transparent 70%); filter:blur(10px); animation: haloGlow 2s ease-in-out infinite alternate; }  
+.logo{ position:relative; width:100%; height:100%; object-fit:contain; z-index:1; filter: drop-shadow(0 18px 28px rgba(0,0,0,.18)) drop-shadow(0 3px 8px rgba(30,136,255,.25)); animation: float 2.25s ease-in-out infinite; }  
+@keyframes float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-8px) rotate(.5deg)}}  
 
-@keyframes haloGlow {
+@keyframes haloGlow {  
   0%,100% { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.05), transparent 70%); }
   5%   { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.07), transparent 70%); }
   10%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.09), transparent 70%); }
@@ -57,9 +57,9 @@ body {
   85%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.11), transparent 70%); }
   90%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.09), transparent 70%); }
   95%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.07), transparent 70%); }
-}
+}  
 
-.title{
+.title{ 
   margin-top:16px;
   font-weight:800;
   letter-spacing:.08em;
@@ -67,9 +67,9 @@ body {
   font-size:clamp(22px,4.5vmin,32px);
   text-shadow:0 1px 0 rgba(255,255,255,.7),0 6px 18px rgba(30,136,255,.18);
   color:#ffffff; /* ফুল সাদা */
-}
+}  
 
-.search{ margin:18px auto 10px; width:min(640px,92vw); display:flex; gap:8px; position:relative; }
+.search{ margin:18px auto 10px; width:min(640px,92vw); display:flex; gap:8px; position:relative; }  
 .search input{
   flex:1;
   font-size:16px;
@@ -92,7 +92,7 @@ body {
   box-shadow:0 10px 20px rgba(30,136,255,.35);
   transition: transform 0.15s ease;
 }
-.search button:active, .tile:active { transform: scale(1.1); }
+.search button:active, .tile:active { transform: scale(1.1); }  
 
 /* suggestion box */
 .suggestions {
@@ -126,10 +126,10 @@ body {
 .suggestions li .num { opacity:0.6; font-size:12px; width:28px; text-align:center; }
 
 /* grid & tiles */
-.grid{ margin:18px auto 0; width:min(760px,96vw); display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
-@media (min-width:520px){ .grid{ grid-template-columns:repeat(6,1fr); } }
+.grid{ margin:18px auto 0; width:min(760px,96vw); display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }  
+@media (min-width:520px){ .grid{ grid-template-columns:repeat(6,1fr); } }  
 
-.tile{
+.tile{ 
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -179,79 +179,21 @@ body {
 }
 .login-btn:hover { transform: scale(1.04); }
 .login-btn:active { transform: scale(0.96); }
-
-/* ====== ADDED: History list + popup styles ====== */
-.saved-history-wrap{
-  width:min(760px,96vw);
-  margin: 20px auto;
-  text-align:left;
-}
-.saved-history-title{
-  font-size:14px;
-  color:var(--muted);
-  margin-bottom:8px;
-  padding-left:6px;
-}
-.history-list{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-.history-item{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:10px;
-  border-radius:12px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-  border:1px solid rgba(60,72,96,0.4);
-  cursor:default;
-  user-select:none;
-}
-.history-item img.clock{
-  width:36px;height:36px;border-radius:8px;
-}
-.history-item .txt{ flex:1; font-size:14px; color:#e6eef8; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.history-item .meta{ font-size:12px; color:var(--muted); opacity:0.8; }
-
-/* popup */
-.delete-popup-backdrop{
-  position:fixed; inset:0; background: rgba(0,0,0,0.45); display:none; align-items:center; justify-content:center; z-index:300;
-}
-.delete-popup{
-  width:min(420px,92vw);
-  background:#0f1726;
-  padding:18px;
-  border-radius:12px;
-  border:1px solid rgba(255,255,255,0.04);
-  box-shadow:0 10px 40px rgba(0,0,0,0.6);
-  text-align:left;
-}
-.delete-popup h4{ margin:0 0 8px 0; font-size:16px; color:#fff; }
-.delete-popup p{ margin:0 0 12px 0; color:var(--muted); font-size:14px; }
-.popup-actions{ display:flex; gap:12px; justify-content:flex-end; }
-.btn{ padding:8px 12px; border-radius:10px; border:0; cursor:pointer; font-weight:700; }
-.btn.no{ background:#16a34a; color:#fff; }
-.btn.yes{ background:#dc2626; color:#fff; }
-
-/* small responsive tweak */
-@media (max-width:520px){ .grid{ grid-template-columns:repeat(3,1fr); } .logo-wrap{ width:140px; } .saved-history-wrap{ padding:0 12px; } }
-
-</style>
-</head>
-<body>
+</style>  
+</head>  
+<body>  
 
 <!-- ====== ADDED: top-right login button ====== -->
 <header class="topbar" aria-hidden="false">
   <button id="loginBtn" class="login-btn" type="button">Login</button>
 </header>
 
-<main class="wrap" role="main" aria-label="mmszone home">
+<main class="wrap" role="main" aria-label="mmszone home">  
   <div class="logo-wrap" aria-hidden="true">  
     <div class="halo"></div>  
-    <img class="logo" src="images/mmszone-logo.png" alt="mmszone logo"> 
-  </div>
-  <div class="title">Kiwi browser</div>
+    <img class="logo" src="mmszone-logo.png" alt="mmszone logo">  
+  </div>  
+  <div class="title">Kiwi browser</div>  
 
   <form id="searchForm" class="search" action="https://www.google.com/search" method="get" autocomplete="off" role="search">
     <input id="q" name="q" type="text" placeholder="Search URL or web on Google…" autocomplete="off" spellcheck="false" aria-autocomplete="list" aria-controls="suggestionsList">
@@ -261,69 +203,62 @@ body {
     <ul id="suggestionsList" class="suggestions" role="listbox" hidden></ul>
   </form>
 
-<section class="grid" aria-label="Quick links">
-  <a class="tile" href="https://www.google.com/" target="_self">
+<section class="grid" aria-label="Quick links">  
+  <a class="tile" href="https://www.google.com/" target="_self">  
     <div class="badge g">
       <img src="https://www.google.com/favicon.ico" alt="Google" width="24" height="24">
     </div>
-    <div>Google</div><small>google.com</small>
-  </a>
+    <div>Google</div><small>google.com</small>  
+  </a>  
 
- <a class="tile" href="https://m.youtube.com/" target="_self">
-  <div class="badge g" style="display:flex; align-items:center; justify-content:center;">
-    <img src="https://static.vecteezy.com/system/resources/previews/047/580/461/non_2x/youtube-popular-social-media-logo-free-png.png" alt="YouTube" width="36" height="36">
-  </div>
-  <div>YouTube</div><small>youtube.com</small>
+ <a class="tile" href="https://m.youtube.com/" target="_self">    
+  <div class="badge g" style="display:flex; align-items:center; justify-content:center;">  
+    <img src="https://static.vecteezy.com/system/resources/previews/047/580/461/non_2x/youtube-popular-social-media-logo-free-png.png" alt="YouTube" width="36" height="36">  
+  </div>  
+  <div>YouTube</div><small>youtube.com</small>    
 </a>
 
-  <a class="tile" href="https://m.facebook.com/" target="_self">
+  <a class="tile" href="https://m.facebook.com/" target="_self">  
     <div class="badge g">
       <img src="https://www.facebook.com/favicon.ico" alt="Facebook" width="24" height="24">
     </div>
-    <div>Facebook</div><small>facebook.com</small>
-  </a>
+    <div>Facebook</div><small>facebook.com</small>  
+  </a>    
 
-  <a class="tile" href="https://web.whatsapp.com/" target="_self">
+  <a class="tile" href="https://web.whatsapp.com/" target="_self">  
     <div class="badge g">
       <img src="https://static.whatsapp.net/rsrc.php/v3/yP/r/rYZqPCBaG70.png" alt="WhatsApp" width="24" height="24">
     </div>
-    <div>WhatsApp</div><small>web.whatsapp.com</small>
-  </a>
+    <div>WhatsApp</div><small>web.whatsapp.com</small>  
+  </a>  
 
-  <a class="tile" href="https://mail.google.com/" target="_self">
+  <a class="tile" href="https://mail.google.com/" target="_self">  
     <div class="badge g">
       <img src="https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico" alt="Gmail" width="24" height="24">
     </div>
-    <div>Gmail</div><small>mail.google.com</small>
-  </a>
+    <div>Gmail</div><small>mail.google.com</small>  
+  </a>  
 
-  <a class="tile" href="https://bn.m.wikipedia.org/" target="_self">
+  <a class="tile" href="https://bn.m.wikipedia.org/" target="_self">  
     <div class="badge g">
       <img src="https://bn.m.wikipedia.org/favicon.ico" alt="Wikipedia" width="24" height="24">
     </div>
-    <div>Wikipedia</div><small>wikipedia.org</small>
-  </a>
+    <div>Wikipedia</div><small>wikipedia.org</small>  
+  </a>  
 
 
-  <a class="tile" href="javascript:(function(){var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/eruda';document.body.appendChild(s);s.onload=function(){eruda.init();};})();" target="_self">
+  <a class="tile" href="javascript:(function(){var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/eruda';document.body.appendChild(s);s.onload=function(){eruda.init();};})();" target="_self">  
   <div class="badge g">
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#5f6368">
       <path d="M19.14,12.94a7.14,7.14,0,0,0,0-1.88l2.11-1.65a.5.5,0,0,0,.12-.65l-2-3.46a.5.5,0,0,0-.61-.22l-2.49,1a6.89,6.89,0,0,0-1.63-.95l-.38-2.65A.5.5,0,0,0,13.78,2H10.22a.5.5,0,0,0-.5.43L9.34,5.08a6.89,6.89,0,0,0-1.63.95l-2.49-1a.5.5,0,0,0-.61.22l-2,3.46a.5.5,0,0,0,.12.65L4.86,11.06a7.14,7.14,0,0,0,0,1.88l-2.11,1.65a.5.5,0,0,0-.12.65l2,3.46a.5.5,0,0,0,.61.22l2.49-1a6.89,6.89,0,0,0,1.63.95l.38,2.65a.5.5,0,0,0,.5.43h3.56a.5.5,0,0,0,.5-.43l.38-2.65a6.89,6.89,0,0,0,1.63-.95l2.49,1a.5.5,0,0,0,.61-.22l2-3.46a.5.5,0,0,0-.12-.65Zm-7.14,2.56A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"/>
     </svg>
   </div>
   <div>Tools</div>
-  <small>DevTools</small>
+  <small>DevTools</small>  
 </a>
 
 </section>
-
-<!-- ====== SAVED HISTORY (ADDED) ====== -->
-<section class="saved-history-wrap" aria-label="Saved search history">
-  <div class="saved-history-title">Saved history (linked to your account when logged in)</div>
-  <div id="historyList" class="history-list" aria-live="polite"></div>
-</section>
-
-</main>
+</main>  
 
 <!-- ================== 🔍 Combined LocalStorage + Google Suggestions ================== -->
 <script>
@@ -393,7 +328,7 @@ body {
 
     if(e.key==='ArrowDown'){ e.preventDefault(); activeIndex=Math.min(activeIndex+1, items.length-1); updateActive(items); }
     else if(e.key==='ArrowUp'){ e.preventDefault(); activeIndex=Math.max(activeIndex-1,0); updateActive(items); }
-    else if(e.key==='Enter'){
+    else if(e.key==='Enter'){ 
       if(activeIndex>=0 && items[activeIndex]) { e.preventDefault(); input.value=items[activeIndex].querySelector('.txt').textContent; clearSuggestions(); form.submit(); }
     }
     else if(e.key==='Escape'){ clearSuggestions(); }
@@ -450,7 +385,7 @@ body {
 <script type="module">
   // Firebase JS SDK v10 (module)
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } 
     from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
 
   // তোমার Firebase project config
@@ -492,7 +427,7 @@ body {
     const photo = user.photoURL;
 
     loginBtn.innerHTML = `
-      <img src="${photo}" alt="${name}"
+      <img src="${photo}" alt="${name}" 
            style="
              width:36px;
              height:36px;
@@ -510,7 +445,7 @@ body {
 
     // ক্লিক করলে লগআউট
     loginBtn.onclick = async () => {
-      try { await signOut(auth); }
+      try { await signOut(auth); } 
       catch (err) { alert('Logout failed: ' + err.message); }
     };
   } else {
@@ -521,27 +456,12 @@ body {
     loginBtn.style.padding = '10px 14px';
     loginBtn.title = '';
     loginBtn.onclick = async () => {
-      try { await signInWithPopup(auth, provider); }
+      try { await signInWithPopup(auth, provider); } 
       catch (err) { alert('Login failed: ' + err.message); }
     };
   }
 });
 </script>
 
-<!-- ====== ADDITIONAL MODULE: History UI + Firestore sync (added features) ====== -->
-<script type="module">
-  // This module intentionally initializes Firestore separately so original code is untouched.
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
-  import {
-    getFirestore, collection, doc, setDoc, deleteDoc, getDocs, query, orderBy
-  } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
-
-  // Use same firebaseConfig as above
-  const firebaseConfig = {
-    apiKey: "AIzaSyD7sZQDSeGYRmXj1v2MD8OB4OtpxZNgY9Q",
-    authDomain: "kiwi-brower-user.firebaseapp.com",
-    projectId: "kiwi-brower-user",
-    storageBucket: "kiwi-brower-user.firebasestorage.app",
-    messagingSenderId: "221131749871",
-    appId: "1:22113
+</body>
+</html>
