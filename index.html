@@ -335,56 +335,143 @@ body {
   </div>
 </div>
 
-<!-- ================== 🔍 Combined LocalStorage + Google Suggestions ================== -->
-<script>
-(function(){
+<!-- ================== 🔍 Combined Firestore-backed History + Google Suggestions (module) ================== -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } 
+    from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
+
+  // তোমার Firebase project config
+  const firebaseConfig = {
+    apiKey: "AIzaSyD7sZQDSeGYRmXj1v2MD8OB4OtpxZNgY9Q",
+    authDomain: "kiwi-brower-user.firebaseapp.com",
+    projectId: "kiwi-brower-user",
+    storageBucket: "kiwi-brower-user.firebasestorage.app",
+    messagingSenderId: "221131749871",
+    appId: "1:221131749871:web:8ea207da21e9b7aec3de1a",
+    measurementId: "G-Z6P6NNLX64"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+  const db = getFirestore(app);
+
+  // UI references
   const input = document.getElementById('q');
   const form = document.getElementById('searchForm');
   const sugList = document.getElementById('suggestionsList');
+  const loginBtn = document.getElementById('loginBtn');
+
+  // Modal refs
+  const deleteModal = document.getElementById('deleteModal');
+  const modalHistoryName = document.getElementById('modalHistoryName');
+  const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+  const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
 
   let debounceTimer = null;
-  let lastCallbackName = null;
   let activeIndex = -1;
 
-  // LocalStorage history
-  function getHistory(){
-    try { return JSON.parse(localStorage.getItem('searchHistory') || '[]'); }
-    catch(e) { return []; }
-  }
-  function saveHistory(term){
-    if(!term.trim()) return;
-    let history = getHistory().filter(x => x.toLowerCase() !== term.toLowerCase());
-    history.unshift(term);
-    if(history.length > 20) history = history.slice(0,20);
-    localStorage.setItem('searchHistory', JSON.stringify(history));
-  }
-  function removeFromHistory(term){
+  let currentDeletingValue = null;
+  let currentDeletingLi = null;
+  let currentUser = null;
+
+  // ========== Firestore helpers ==========
+  async function getHistoryFromFirestore(){
+    if(!currentUser) return [];
     try{
-      const history = getHistory().filter(x => x.toLowerCase() !== term.toLowerCase());
-      localStorage.setItem('searchHistory', JSON.stringify(history));
-    }catch(e){}
+      const dref = doc(db, 'users', currentUser.uid);
+      const snap = await getDoc(dref);
+      if(!snap.exists()) return [];
+      const data = snap.data();
+      return Array.isArray(data.items) ? data.items : [];
+    }catch(e){
+      console.error('Error reading history from Firestore', e);
+      return [];
+    }
   }
 
-  // Escape HTML for safety
+  async function saveHistoryToFirestore(term){
+    if(!term || !term.trim()) return;
+    // If not signed in, trigger sign-in flow
+    if(!currentUser){
+      try {
+        await signInWithPopup(auth, provider);
+        // onAuthStateChanged will update currentUser
+      } catch(err){
+        console.error('Sign in required to save history', err);
+        alert('Please sign in with Google to save search history to your account.');
+        return;
+      }
+    }
+
+    try{
+      const dref = doc(db, 'users', currentUser.uid);
+      const snap = await getDoc(dref);
+      let items = [];
+      if(snap.exists() && Array.isArray(snap.data().items)){
+        items = snap.data().items.slice();
+      }
+      // remove case-insensitive duplicates
+      items = items.filter(x => x.toLowerCase() !== term.toLowerCase());
+      items.unshift(term);
+      if(items.length > 20) items = items.slice(0,20);
+      await setDoc(dref, { items }, { merge: true });
+    }catch(e){
+      console.error('Error saving history to Firestore', e);
+    }
+  }
+
+  async function removeFromHistoryInFirestore(term){
+    if(!currentUser) return;
+    try{
+      const dref = doc(db, 'users', currentUser.uid);
+      const snap = await getDoc(dref);
+      let items = [];
+      if(snap.exists() && Array.isArray(snap.data().items)){
+        items = snap.data().items.slice();
+      }
+      const filtered = items.filter(x => x.toLowerCase() !== term.toLowerCase());
+      await setDoc(dref, { items: filtered }, { merge: true });
+    }catch(e){
+      console.error('Error removing history from Firestore', e);
+    }
+  }
+
+  // ========== UI and suggestions logic ==========
   function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-  // Clear suggestions
   function clearSuggestions(){
     sugList.innerHTML = '';
     sugList.hidden = true;
     activeIndex = -1;
   }
 
-  // Merge and show suggestions (local + Google)
-  function showSuggestions(list){
+  // Render suggestions array of objects: { text, saved: boolean }
+  function renderSuggestions(items){
     sugList.innerHTML = '';
-    if(!list.length){ clearSuggestions(); return; }
+    if(!items || !items.length){ clearSuggestions(); return; }
 
-    list.forEach((text, i) => {
+    items.forEach((obj, i) => {
+      const text = obj.text;
+      const saved = !!obj.saved;
+
       const li = document.createElement('li');
       li.setAttribute('role','option');
       li.dataset.index = i;
-      li.innerHTML = '<span class="num">'+(i+1)+'</span><span class="txt">'+escapeHtml(text)+'</span>';
+
+      // left: number + text, right: saved indicator (clock image) if saved
+      li.innerHTML = `
+        <div class="left">
+          <span class="num">${i+1}</span>
+          <span class="txt">${escapeHtml(text)}</span>
+        </div>
+        <div class="saved-indicator" aria-hidden="${saved ? 'false' : 'true'}">
+          ${ saved ? '<img src="clock_64x64.png" alt="saved">' : '' }
+        </div>
+      `;
+
       li.addEventListener('click', ()=>{
         input.value = text;
         clearSuggestions();
@@ -392,12 +479,11 @@ body {
       });
 
       // Long-press handling for delete confirmation
-      (function attachLongPressHandlers(item, value){
+      (function attachLongPressHandlers(item, value, isSaved){
         let pressTimer = null;
         const longPressDuration = 600; // ms
 
         const startPress = (e) => {
-          // ignore right-click and such
           if (e.type === 'mousedown' && e.button !== 0) return;
           pressTimer = setTimeout(()=> {
             openDeleteModal(value, item);
@@ -413,9 +499,8 @@ body {
         item.addEventListener('mousedown', startPress);
         item.addEventListener('mouseup', cancelPress);
         item.addEventListener('mouseleave', cancelPress);
-        // prevent context menu on long-press for nicer UX
         item.addEventListener('contextmenu', (ev)=>{ ev.preventDefault(); }, {passive:false});
-      })(li, text);
+      })(li, text, saved);
 
       sugList.appendChild(li);
     });
@@ -430,6 +515,7 @@ body {
       items[activeIndex].scrollIntoView({block:'nearest'});
     }
   }
+
   input.addEventListener('keydown', function(e){
     const items = sugList.querySelectorAll('li');
     if(sugList.hidden) return;
@@ -442,26 +528,54 @@ body {
     else if(e.key==='Escape'){ clearSuggestions(); }
   });
 
-  // JSONP Google suggestions
+  // JSONP Google suggestions + Firestore merge (produces objects with saved flag)
   function requestGoogleSuggestions(query){
     if(!query || !query.trim()){ return; }
 
     const cbName = 'gs_cb_'+Date.now()+'_'+Math.floor(Math.random()*1000);
-    lastCallbackName = cbName;
+    let scriptEl = null;
 
-    window[cbName] = function(data){
-      let googleSugs = (Array.isArray(data) && Array.isArray(data[1])) ? data[1] : [];
-      // Merge with local suggestions (remove duplicates)
-      const localSugs = getHistory().filter(t => t.toLowerCase().includes(query.toLowerCase()));
-      const merged = [...new Set([...localSugs, ...googleSugs])].slice(0,20);
-      showSuggestions(merged);
+    window[cbName] = async function(data){
+      try{
+        let googleSugs = (Array.isArray(data) && Array.isArray(data[1])) ? data[1] : [];
+        // dedupe google suggestions preserving order
+        const seen = new Set();
+        googleSugs = googleSugs.filter(s => {
+          const k = String(s).toLowerCase();
+          if(seen.has(k)) return false;
+          seen.add(k);
+          return true;
+        });
 
-      // cleanup
-      try{ delete window[cbName]; } catch(e){ window[cbName]=undefined; }
-      if(scriptEl && scriptEl.parentNode) scriptEl.parentNode.removeChild(scriptEl);
+        const stored = await getHistoryFromFirestore();
+        const storedLowerSet = new Set((stored||[]).map(x => x.toLowerCase()));
+
+        // Merge: stored matching query first, then google suggestions not duplicated
+        const localMatches = (stored||[]).filter(t => t.toLowerCase().includes(query.toLowerCase()));
+        const merged = [];
+
+        // add local matches (marked saved)
+        localMatches.forEach(t => merged.push({ text: t, saved: true }));
+
+        // add google suggestions, mark saved if present in stored
+        googleSugs.forEach(gs => {
+          const lower = String(gs).toLowerCase();
+          // skip if already added (from localMatches)
+          if(merged.some(it => it.text.toLowerCase() === lower)) return;
+          merged.push({ text: gs, saved: storedLowerSet.has(lower) });
+        });
+
+        // limit to 20
+        renderSuggestions(merged.slice(0,20));
+      }catch(e){
+        console.error(e);
+      } finally {
+        try{ delete window[cbName]; } catch(e){ window[cbName]=undefined; }
+        if(scriptEl && scriptEl.parentNode) scriptEl.parentNode.removeChild(scriptEl);
+      }
     };
 
-    const scriptEl = document.createElement('script');
+    scriptEl = document.createElement('script');
     scriptEl.src = 'https://www.google.com/complete/search?client=firefox&callback='+cbName+'&q='+encodeURIComponent(query);
     document.body.appendChild(scriptEl);
   }
@@ -470,15 +584,27 @@ body {
   function debounce(fn,delay){ return function(...args){ clearTimeout(debounceTimer); debounceTimer=setTimeout(()=>fn.apply(this,args),delay); } }
   const debouncedRequest = debounce(()=>{ requestGoogleSuggestions(input.value.trim()); }, 180);
 
-  // Input event
   input.addEventListener('input', ()=>{
     activeIndex=-1;
     debouncedRequest();
   });
 
-  // Form submit saves to local
-  form.addEventListener('submit', ()=>{
-    saveHistory(input.value.trim());
+  // Show user's saved history when input focuses and is empty (all marked saved)
+  input.addEventListener('focus', async ()=>{
+    const q = input.value.trim();
+    if(q) return;
+    const items = await getHistoryFromFirestore();
+    if(items && items.length) {
+      const objs = items.slice(0,20).map(t => ({ text: t, saved: true }));
+      renderSuggestions(objs);
+    }
+  });
+
+  // Form submit saves to Firestore (not localStorage)
+  form.addEventListener('submit', async (e)=>{
+    // save to firestore; if user not signed-in, will prompt
+    await saveHistoryToFirestore(input.value.trim());
+    // allow normal submit to proceed (navigates to Google search)
   });
 
   // Click outside closes suggestions
@@ -487,22 +613,12 @@ body {
   });
 
   // ====== Delete modal logic (added) ======
-  const deleteModal = document.getElementById('deleteModal');
-  const modalHistoryName = document.getElementById('modalHistoryName');
-  const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-  const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
-
-  let currentDeletingValue = null;
-  let currentDeletingLi = null;
-
   function openDeleteModal(value, liElement){
     currentDeletingValue = value;
     currentDeletingLi = liElement;
     modalHistoryName.textContent = value;
     deleteModal.style.display = 'flex';
     deleteModal.setAttribute('aria-hidden','false');
-
-    // focus the cancel button for safety / keyboard
     cancelDeleteBtn.focus();
   }
 
@@ -513,19 +629,23 @@ body {
     deleteModal.setAttribute('aria-hidden','true');
   }
 
-  confirmDeleteBtn.addEventListener('click', ()=>{
+  confirmDeleteBtn.addEventListener('click', async ()=>{
     if(!currentDeletingValue) { closeDeleteModal(); return; }
-    // Remove from local storage history if present
-    removeFromHistory(currentDeletingValue);
+    await removeFromHistoryInFirestore(currentDeletingValue);
 
-    // Remove the li from suggestions UI if present
+    // Update UI: if currentDeletingLi exists, remove it; otherwise refresh visible suggestions
     if(currentDeletingLi && currentDeletingLi.parentNode){
       currentDeletingLi.parentNode.removeChild(currentDeletingLi);
+      // if list empty now, hide
+      if(!sugList.querySelectorAll('li').length) clearSuggestions();
     } else {
-      // fallback: rebuild suggestions from current input
       const query = input.value.trim();
       if(query) requestGoogleSuggestions(query);
-      else clearSuggestions();
+      else {
+        const items = await getHistoryFromFirestore();
+        if(items && items.length) renderSuggestions(items.slice(0,20).map(t => ({ text: t, saved: true })));
+        else clearSuggestions();
+      }
     }
 
     closeDeleteModal();
@@ -545,34 +665,7 @@ body {
     if(e.key === 'Escape' && deleteModal.style.display === 'flex') closeDeleteModal();
   });
 
-})();
-</script>
-
-<!-- ====== Firebase Google Login (module) ====== -->
-<script type="module">
-  // Firebase JS SDK v10 (module)
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } 
-    from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
-
-  // তোমার Firebase project config
-  const firebaseConfig = {
-    apiKey: "AIzaSyD7sZQDSeGYRmXj1v2MD8OB4OtpxZNgY9Q",
-    authDomain: "kiwi-brower-user.firebaseapp.com",
-    projectId: "kiwi-brower-user",
-    storageBucket: "kiwi-brower-user.firebasestorage.app",
-    messagingSenderId: "221131749871",
-    appId: "1:221131749871:web:8ea207da21e9b7aec3de1a",
-    measurementId: "G-Z6P6NNLX64"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const provider = new GoogleAuthProvider();
-
-  const loginBtn = document.getElementById('loginBtn');
-
-  // ক্লিক করলে লগইন বা লগআউট
+  // ====== Auth / login button logic (mirrors original behavior) ======
   loginBtn.addEventListener('click', async () => {
     const user = auth.currentUser;
     try {
@@ -587,48 +680,56 @@ body {
     }
   });
 
-  // লগইন স্টেট অনুযায়ী বাটনের টেক্সট পরিবর্তন
-  onAuthStateChanged(auth, (user) => {
-  if (user) {
-    const name = user.displayName || user.email || 'User';
-    const photo = user.photoURL;
+  onAuthStateChanged(auth, async (user) => {
+    currentUser = user;
+    if (user) {
+      const name = user.displayName || user.email || 'User';
+      const photo = user.photoURL;
 
-    loginBtn.innerHTML = `
-      <img src="${photo}" alt="${name}" 
-           style="
-             width:36px;
-             height:36px;
-             border-radius:50%;
-             object-fit:cover;
-             display:block;
-             border:2px solid rgba(255,255,255,0.5);
-             box-shadow:0 0 8px rgba(0,0,0,0.3);
-           ">
-    `;
-    loginBtn.style.background = 'transparent';
-    loginBtn.style.padding = '0';
-    loginBtn.style.border = 'none';
-    loginBtn.title = name;
+      loginBtn.innerHTML = `
+        <img src="${photo}" alt="${name}" 
+             style="
+               width:36px;
+               height:36px;
+               border-radius:50%;
+               object-fit:cover;
+               display:block;
+               border:2px solid rgba(255,255,255,0.5);
+               box-shadow:0 0 8px rgba(0,0,0,0.3);
+             ">
+      `;
+      loginBtn.style.background = 'transparent';
+      loginBtn.style.padding = '0';
+      loginBtn.style.border = 'none';
+      loginBtn.title = name;
 
-    // ক্লিক করলে লগআউট
-    loginBtn.onclick = async () => {
-      try { await signOut(auth); } 
-      catch (err) { alert('Logout failed: ' + err.message); }
-    };
-  } else {
-    // লগআউট বা লগইন না থাকলে আগের মতো Login বাটন দেখাবে
-    loginBtn.textContent = 'Login';
-    loginBtn.style.background = 'linear-gradient(180deg, #2c98ff, #1876ff)';
-    loginBtn.style.border = 'none';
-    loginBtn.style.padding = '10px 14px';
-    loginBtn.title = '';
-    loginBtn.onclick = async () => {
-      try { await signInWithPopup(auth, provider); } 
-      catch (err) { alert('Login failed: ' + err.message); }
-    };
-  }
-});
+      // ক্লিক করলে লগআউট
+      loginBtn.onclick = async () => {
+        try { await signOut(auth); } 
+        catch (err) { alert('Logout failed: ' + err.message); }
+      };
+    } else {
+      // লগআউট বা লগইন না থাকলে আগের মতো Login বাটন দেখাবে
+      loginBtn.textContent = 'Login';
+      loginBtn.style.background = 'linear-gradient(180deg, #2c98ff, #1876ff)';
+      loginBtn.style.border = 'none';
+      loginBtn.style.padding = '10px 14px';
+      loginBtn.title = '';
+      loginBtn.onclick = async () => {
+        try { await signInWithPopup(auth, provider); } 
+        catch (err) { alert('Login failed: ' + err.message); }
+      };
+    }
+
+    // If input is focused, refresh visible suggestions from user's history
+    if(document.activeElement === input){
+      const q = input.value.trim();
+      if(!q){
+        const items = await getHistoryFromFirestore();
+        if(items && items.length) renderSuggestions(items.slice(0,20).map(t => ({ text: t, saved: true })));
+      }
+    }
+  });
 </script>
-
 </body>
 </html>
