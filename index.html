@@ -179,6 +179,66 @@ body {
 }
 .login-btn:hover { transform: scale(1.04); }
 .login-btn:active { transform: scale(0.96); }
+
+/* ====== Modal for delete confirmation (added) ====== */
+#deleteModal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  background: rgba(2,6,23,0.55);
+}
+#deleteModal .modal-card {
+  width: min(92vw, 420px);
+  background: linear-gradient(180deg, #0f1728, #081224);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 16px;
+  color: #e6eef8;
+  box-shadow: 0 10px 40px rgba(1,6,20,0.7);
+  text-align: left;
+}
+#deleteModal .modal-title {
+  font-weight: 700;
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+#deleteModal .modal-body {
+  margin-bottom: 14px;
+  font-size: 15px;
+  line-height: 1.4;
+}
+#deleteModal .modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+.btn-danger {
+  background: #ef4444; /* red */
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+}
+.btn-cancel {
+  background: #16a34a; /* green */
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+/* small responsive tweak for modal */
+@media (max-width:420px){
+  #deleteModal .modal-card { padding: 12px; }
+  #deleteModal .modal-actions { justify-content: space-between; }
+}
 </style>  
 </head>  
 <body>  
@@ -260,6 +320,21 @@ body {
 </section>
 </main>  
 
+<!-- Delete confirmation modal (added) -->
+<div id="deleteModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="deleteModalTitle">
+  <div class="modal-card" role="document">
+    <div class="modal-title" id="deleteModalTitle">Confirm delete</div>
+    <div class="modal-body" id="deleteModalBody">
+      <!-- message will be injected -->
+      can you delete this "<span id="modalHistoryName"></span>"
+    </div>
+    <div class="modal-actions">
+      <button id="confirmDeleteBtn" class="btn-danger" type="button">Yes</button>
+      <button id="cancelDeleteBtn" class="btn-cancel" type="button">No</button>
+    </div>
+  </div>
+</div>
+
 <!-- ================== 🔍 Combined LocalStorage + Google Suggestions ================== -->
 <script>
 (function(){
@@ -282,6 +357,12 @@ body {
     history.unshift(term);
     if(history.length > 20) history = history.slice(0,20);
     localStorage.setItem('searchHistory', JSON.stringify(history));
+  }
+  function removeFromHistory(term){
+    try{
+      const history = getHistory().filter(x => x.toLowerCase() !== term.toLowerCase());
+      localStorage.setItem('searchHistory', JSON.stringify(history));
+    }catch(e){}
   }
 
   // Escape HTML for safety
@@ -309,6 +390,33 @@ body {
         clearSuggestions();
         form.submit();
       });
+
+      // Long-press handling for delete confirmation
+      (function attachLongPressHandlers(item, value){
+        let pressTimer = null;
+        const longPressDuration = 600; // ms
+
+        const startPress = (e) => {
+          // ignore right-click and such
+          if (e.type === 'mousedown' && e.button !== 0) return;
+          pressTimer = setTimeout(()=> {
+            openDeleteModal(value, item);
+          }, longPressDuration);
+        };
+        const cancelPress = () => {
+          if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; }
+        };
+
+        item.addEventListener('touchstart', startPress, {passive:true});
+        item.addEventListener('touchend', cancelPress);
+        item.addEventListener('touchmove', cancelPress);
+        item.addEventListener('mousedown', startPress);
+        item.addEventListener('mouseup', cancelPress);
+        item.addEventListener('mouseleave', cancelPress);
+        // prevent context menu on long-press for nicer UX
+        item.addEventListener('contextmenu', (ev)=>{ ev.preventDefault(); }, {passive:false});
+      })(li, text);
+
       sugList.appendChild(li);
     });
     sugList.hidden = false;
@@ -376,6 +484,65 @@ body {
   // Click outside closes suggestions
   document.addEventListener('click', (e)=>{
     if(!form.contains(e.target)) clearSuggestions();
+  });
+
+  // ====== Delete modal logic (added) ======
+  const deleteModal = document.getElementById('deleteModal');
+  const modalHistoryName = document.getElementById('modalHistoryName');
+  const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+  const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+
+  let currentDeletingValue = null;
+  let currentDeletingLi = null;
+
+  function openDeleteModal(value, liElement){
+    currentDeletingValue = value;
+    currentDeletingLi = liElement;
+    modalHistoryName.textContent = value;
+    deleteModal.style.display = 'flex';
+    deleteModal.setAttribute('aria-hidden','false');
+
+    // focus the cancel button for safety / keyboard
+    cancelDeleteBtn.focus();
+  }
+
+  function closeDeleteModal(){
+    currentDeletingValue = null;
+    currentDeletingLi = null;
+    deleteModal.style.display = 'none';
+    deleteModal.setAttribute('aria-hidden','true');
+  }
+
+  confirmDeleteBtn.addEventListener('click', ()=>{
+    if(!currentDeletingValue) { closeDeleteModal(); return; }
+    // Remove from local storage history if present
+    removeFromHistory(currentDeletingValue);
+
+    // Remove the li from suggestions UI if present
+    if(currentDeletingLi && currentDeletingLi.parentNode){
+      currentDeletingLi.parentNode.removeChild(currentDeletingLi);
+    } else {
+      // fallback: rebuild suggestions from current input
+      const query = input.value.trim();
+      if(query) requestGoogleSuggestions(query);
+      else clearSuggestions();
+    }
+
+    closeDeleteModal();
+  });
+
+  cancelDeleteBtn.addEventListener('click', ()=>{
+    closeDeleteModal();
+  });
+
+  // Close modal on outside click
+  deleteModal.addEventListener('click', (e)=>{
+    if(e.target === deleteModal) closeDeleteModal();
+  });
+
+  // Close on Escape
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape' && deleteModal.style.display === 'flex') closeDeleteModal();
   });
 
 })();
