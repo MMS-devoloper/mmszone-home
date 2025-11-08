@@ -1,18 +1,22 @@
 <!doctype html>
 <html lang="bn">  
-<head>  
-<meta charset="utf-8">  
-<meta name="viewport" content="width=device-width,initial-scale=1">  
-<title>New tab</title>  
-<style>  
-/* Root variables */
-:root {
-  --bg: #0f1724;
-  --card: rgba(255, 255, 255, 0.06);
-  --muted: rgba(255, 255, 255, 0.65);
-  --accent: rgba(99, 102, 241, 0.9);
-  color: #e6eef8;
-}
+<head>    
+<meta charset="utf-8">    
+<meta name="viewport" content="width=device-width,initial-scale=1">    
+<title>New tab</title>    
+
+<!-- Google Font: Fredoka One -->
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+
+<style>    
+/* Root variables */  
+:root {  
+  --bg: #0f1724;  
+  --card: rgba(255, 255, 255, 0.06);  
+  --muted: rgba(255, 255, 255, 0.65);  
+  --accent: rgba(99, 102, 241, 0.9);  
+  color: #e6eef8;  
+}  
 
 /* Body Design */
 body {
@@ -31,216 +35,242 @@ body {
 }
 
 /* লোগো + হ্যালো */
-.logo-wrap{ position:relative; width:min(54vmin,240px); aspect-ratio:1/1.15; margin:8px auto 0; }  
-.halo{ position:absolute; inset:0; border-radius:32px; background:radial-gradient(60% 60% at 50% 40%, var(--blue,.10), transparent 70%); filter:blur(10px); animation: haloGlow 2s ease-in-out infinite alternate; }  
-.logo{ position:relative; width:100%; height:100%; object-fit:contain; z-index:1; filter: drop-shadow(0 18px 28px rgba(0,0,0,.18)) drop-shadow(0 3px 8px rgba(30,136,255,.25)); animation: float 2.25s ease-in-out infinite; }  
-@keyframes float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-8px) rotate(.5deg)}}  
+.logo-wrap{ position:relative; width:min(54vmin,240px); aspect-ratio:1/1.15; margin:8px auto 0; }
+.halo{ position:absolute; inset:0; border-radius:32px; background:radial-gradient(60% 60% at 50% 40%, var(--blue,.10), transparent 70%); filter:blur(10px); animation: haloGlow 2s ease-in-out infinite alternate; }
+.logo{ position:relative; width:100%; height:100%; object-fit:contain; z-index:1; filter: drop-shadow(0 18px 28px rgba(0,0,0,.18)) drop-shadow(0 3px 8px rgba(30,136,255,.25)); animation: float 2.25s ease-in-out infinite; }
+@keyframes float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-8px) rotate(.5deg)}}
 
-@keyframes haloGlow {  
-  0%,100% { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.05), transparent 70%); }
-  5%   { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.07), transparent 70%); }
-  10%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.09), transparent 70%); }
-  15%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.11), transparent 70%); }
-  20%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.13), transparent 70%); }
-  25%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.15), transparent 70%); }
-  30%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.17), transparent 70%); }
-  35%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.19), transparent 70%); }
-  40%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.21), transparent 70%); }
-  45%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.23), transparent 70%); }
-  50%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.25), transparent 70%); }
-  55%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.23), transparent 70%); }
-  60%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.21), transparent 70%); }
-  65%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.19), transparent 70%); }
-  70%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.17), transparent 70%); }
-  75%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.15), transparent 70%); }
-  80%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.13), transparent 70%); }
-  85%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.11), transparent 70%); }
-  90%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.09), transparent 70%); }
-  95%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.07), transparent 70%); }
-}  
+@keyframes haloGlow {
+0%,100% { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.05), transparent 70%); }
+5%   { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.07), transparent 70%); }
+10%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.09), transparent 70%); }
+15%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.11), transparent 70%); }
+20%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.13), transparent 70%); }
+25%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.15), transparent 70%); }
+30%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.17), transparent 70%); }
+35%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.19), transparent 70%); }
+40%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.21), transparent 70%); }
+45%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.23), transparent 70%); }
+50%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.25), transparent 70%); }
+55%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.23), transparent 70%); }
+60%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.21), transparent 70%); }
+65%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.19), transparent 70%); }
+70%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.17), transparent 70%); }
+75%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.15), transparent 70%); }
+80%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.13), transparent 70%); }
+85%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.11), transparent 70%); }
+90%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.09), transparent 70%); }
+95%  { background: radial-gradient(60% 60% at 50% 40%, rgba(30,136,255,0.07), transparent 70%); }
+}
 
-.title{ 
-  margin-top:16px;
-  font-weight:800;
-  letter-spacing:.08em;
-  text-transform:lowercase;
-  font-size:clamp(22px,4.5vmin,32px);
-  text-shadow:0 1px 0 rgba(255,255,255,.7),0 6px 18px rgba(30,136,255,.18);
-  color:#ffffff; /* ফুল সাদা */
-}  
+.title{
+margin-top:16px;
+font-weight:800;
+letter-spacing:.08em;
+text-transform:lowercase;
+font-size:clamp(22px,4.5vmin,32px);
+text-shadow:0 1px 0 rgba(255,255,255,.7),0 6px 18px rgba(30,136,255,.18);
+color:#ffffff; /* ফুল সাদা */
+}
 
-.search{ margin:18px auto 10px; width:min(640px,92vw); display:flex; gap:8px; position:relative; }  
+.search{ margin:18px auto 10px; width:min(640px,92vw); display:flex; gap:8px; position:relative; }
 .search input{
-  flex:1;
-  font-size:16px;
-  padding:14px 14px;
-  border-radius:16px;
-  border:1px solid #2a3448;
-  background:#1b2535;      /* ডার্ক ব্যাকগ্রাউন্ড */
-  color:#ffffff;            /* লেখা সাদা */
-  outline:none;
-  box-shadow:0 6px 18px rgba(0,0,0,.25);
+flex:1;
+font-size:16px;
+padding:14px 14px;
+border-radius:16px;
+border:1px solid #2a3448;
+background:#1b2535;
+color:#ffffff;
+outline:none;
+box-shadow:0 6px 18px rgba(0,0,0,.25);
 }
 .search button{
-  padding:12px 16px;
-  border-radius:14px;
-  border:0;
-  cursor:pointer;
-  font-weight:700;
-  background:linear-gradient(180deg,#2c98ff,#1876ff);
-  color:white;
-  box-shadow:0 10px 20px rgba(30,136,255,.35);
-  transition: transform 0.15s ease;
+padding:12px 16px;
+border-radius:14px;
+border:0;
+cursor:pointer;
+font-weight:700;
+background:linear-gradient(180deg,#2c98ff,#1876ff);
+color:white;
+box-shadow:0 10px 20px rgba(30,136,255,.35);
+transition: transform 0.15s ease;
 }
-.search button:active, .tile:active { transform: scale(1.1); }  
+.search button:active, .tile:active { transform: scale(1.1); }
 
 /* suggestion box */
 .suggestions {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: calc(100% + 8px);
-  margin: 0;
-  padding: 6px;
-  list-style: none;
-  background: linear-gradient(180deg, rgba(30,35,50,0.98), rgba(20,24,36,0.98));
-  border-radius: 12px;
-  border: 1px solid rgba(60,72,96,0.6);
-  max-height: 260px;
-  overflow: auto;
-  box-shadow: 0 10px 30px rgba(3,10,22,0.6);
-  z-index: 40;
+position: absolute;
+left: 0;
+right: 0;
+top: calc(100% + 8px);
+margin: 0;
+padding: 6px;
+list-style: none;
+background: linear-gradient(180deg, rgba(30,35,50,0.98), rgba(20,24,36,0.98));
+border-radius: 12px;
+border: 1px solid rgba(60,72,96,0.6);
+max-height: 260px;
+overflow: auto;
+box-shadow: 0 10px 30px rgba(3,10,22,0.6);
+z-index: 40;
 }
 .suggestions li{
-  display:flex;
-  gap:8px;
-  align-items:center;
-  padding:8px 10px;
-  color:#e6eef8;
-  cursor:pointer;
-  border-radius:8px;
+display:flex;
+gap:8px;
+align-items:center;
+padding:8px 10px;
+color:#e6eef8;
+cursor:pointer;
+border-radius:8px;
 }
 .suggestions li:hover, .suggestions li.active {
-  background: rgba(255,255,255,0.03);
+background: rgba(255,255,255,0.03);
 }
 .suggestions li .num { opacity:0.6; font-size:12px; width:28px; text-align:center; }
 
 /* grid & tiles */
-.grid{ margin:18px auto 0; width:min(760px,96vw); display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }  
-@media (min-width:520px){ .grid{ grid-template-columns:repeat(6,1fr); } }  
+.grid{ margin:18px auto 0; width:min(760px,96vw); display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+@media (min-width:520px){ .grid{ grid-template-columns:repeat(6,1fr); } }
 
-.tile{ 
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:8px;
-  text-decoration:none;
-  color:#e6eef8;
-  padding:12px 8px;
-  border-radius:18px;
-  background:#1b2535;
-  border:1px solid #2a3448;
-  box-shadow:0 8px 20px rgba(0,0,0,.25);
-  transition: transform 0.15s ease, background .3s;
+.tile{
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:8px;
+text-decoration:none;
+color:#e6eef8;
+padding:12px 8px;
+border-radius:18px;
+background:#1b2535;
+border:1px solid #2a3448;
+box-shadow:0 8px 20px rgba(0,0,0,.25);
+transition: transform 0.15s ease, background .3s;
 }
 .tile:hover{ background:#253045; }
 
 .badge{
-  width:42px;height:42px;border-radius:50%;
-  display:grid;place-items:center;
-  font-weight:800;
-  border:1px solid #3a4560;
-  box-shadow:inset 0 0 0 6px #2b364b;
-  background:#101726;
-  color:#fff;
+width:42px;height:42px;border-radius:50%;
+display:grid;place-items:center;
+font-weight:800;
+border:1px solid #3a4560;
+box-shadow:inset 0 0 0 6px #2b364b;
+background:#101726;
+color:#fff;
 }
 .tile small{opacity:.7}
 .g{background:transparent}
 
-/* ====== ADDED: Login button styles ====== */
+/* ====== ADDED: RGB Glowing Login Button styles ====== */
 .topbar {
-  position: absolute;
-  top: 12px;
-  right: 16px;
-  z-index: 100;
+position: absolute;
+top: 12px;
+right: 16px;
+z-index: 100;
 }
 .login-btn {
-  background: linear-gradient(180deg, #2c98ff, #1876ff);
-  border: none;
-  color: #fff;
-  font-weight: 600;
-  padding: 10px 14px;
-  border-radius: 12px;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(30,136,255,0.4);
-  transition: all 0.18s ease;
-  font-family: 'Segoe UI', sans-serif;
-  font-size: 14px;
-}
-.login-btn:hover { transform: scale(1.04); }
-.login-btn:active { transform: scale(0.96); }
+position: relative;
+border: none;
+padding: 10px 14px;
+color: #fff;
+font-size: 14px;
+font-family: 'Fredoka One', cursive;
+letter-spacing: 1px;
+border-radius: 10px;
+cursor: pointer;
+z-index: 1;
 
-/* ====== Modal for delete confirmation (added) ====== */
+background: linear-gradient(270deg, #00f5ff, #ff00ff, #ff0077, #ff9a00, #00ff85, #00f5ff);
+background-size: 800% 800%;
+animation: rgbFlow 6s ease infinite;
+
+transition: transform 0.3s;
+box-shadow: 0 0 20px rgba(255,255,255,0.3);
+}
+
+.login-btn:hover {
+transform: scale(1.1);
+}
+
+.login-btn::before {
+content: '';
+position: absolute;
+top: -4px; left: -4px; right: -4px; bottom: -4px;
+border-radius: 12px;
+background: linear-gradient(270deg, #00f5ff, #ff00ff, #ff0077, #ff9a00, #00ff85, #00f5ff);
+background-size: 600% 600%;
+z-index: -1;
+filter: blur(10px);
+animation: rgbFlow 5s linear infinite;
+}
+
+@keyframes rgbFlow {
+0% { background-position: 0% 50%; }
+50% { background-position: 100% 50%; }
+100% { background-position: 0% 50%; }
+}
+
+/* ====== Modal for delete confirmation (added) */
 #deleteModal {
-  position: fixed;
-  inset: 0;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 200;
-  background: rgba(2,6,23,0.55);
+position: fixed;
+inset: 0;
+display: none;
+align-items: center;
+justify-content: center;
+z-index: 200;
+background: rgba(2,6,23,0.55);
 }
 #deleteModal .modal-card {
-  width: min(92vw, 420px);
-  background: linear-gradient(180deg, #0f1728, #081224);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 12px;
-  padding: 16px;
-  color: #e6eef8;
-  box-shadow: 0 10px 40px rgba(1,6,20,0.7);
-  text-align: left;
+width: min(92vw, 420px);
+background: linear-gradient(180deg, #0f1728, #081224);
+border: 1px solid rgba(255,255,255,0.06);
+border-radius: 12px;
+padding: 16px;
+color: #e6eef8;
+box-shadow: 0 10px 40px rgba(1,6,20,0.7);
+text-align: left;
 }
 #deleteModal .modal-title {
-  font-weight: 700;
-  margin-bottom: 8px;
-  font-size: 16px;
+font-weight: 700;
+margin-bottom: 8px;
+font-size: 16px;
 }
 #deleteModal .modal-body {
-  margin-bottom: 14px;
-  font-size: 15px;
-  line-height: 1.4;
+margin-bottom: 14px;
+font-size: 15px;
+line-height: 1.4;
 }
 #deleteModal .modal-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
+display: flex;
+gap: 10px;
+justify-content: flex-end;
 }
 .btn-danger {
-  background: #ef4444; /* red */
-  color: #fff;
-  border: none;
-  padding: 10px 14px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 700;
+background: #ef4444;
+color: #fff;
+border: none;
+padding: 10px 14px;
+border-radius: 10px;
+cursor: pointer;
+font-weight: 700;
 }
 .btn-cancel {
-  background: #16a34a; /* green */
-  color: #fff;
-  border: none;
-  padding: 10px 14px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 700;
+background: #16a34a;
+color: #fff;
+border: none;
+padding: 10px 14px;
+border-radius: 10px;
+cursor: pointer;
+font-weight: 700;
 }
 
 /* small responsive tweak for modal */
 @media (max-width:420px){
-  #deleteModal .modal-card { padding: 12px; }
-  #deleteModal .modal-actions { justify-content: space-between; }
+#deleteModal .modal-card { padding: 12px; }
+#deleteModal .modal-actions { justify-content: space-between; }
 }
-</style>  
-</head>  
+</style>
+</head>
 <body>  
 
 <!-- ====== ADDED: top-right login button ====== -->
@@ -329,62 +359,149 @@ body {
       can you delete this "<span id="modalHistoryName"></span>"
     </div>
     <div class="modal-actions">
-      <button id="confirmDeleteBtn" class="btn-danger" type="button">Yes</button>
-      <button id="cancelDeleteBtn" class="btn-cancel" type="button">No</button>
-    </div>
+  <button id="cancelDeleteBtn" class="btn-cancel" type="button">No</button>
+  <button id="confirmDeleteBtn" class="btn-danger" type="button">Yes</button>
+   </div>
   </div>
-</div>
+</d>
 
-<!-- ================== 🔍 Combined LocalStorage + Google Suggestions ================== -->
-<script>
-(function(){
+<!-- ================== 🔍 Combined Firestore-backed History + Google Suggestions (module) ================== -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } 
+    from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
+
+  // তোমার Firebase project config
+  const firebaseConfig = {
+    apiKey: "AIzaSyD7sZQDSeGYRmXj1v2MD8OB4OtpxZNgY9Q",
+    authDomain: "kiwi-brower-user.firebaseapp.com",
+    projectId: "kiwi-brower-user",
+    storageBucket: "kiwi-brower-user.firebasestorage.app",
+    messagingSenderId: "221131749871",
+    appId: "1:221131749871:web:8ea207da21e9b7aec3de1a",
+    measurementId: "G-Z6P6NNLX64"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+  const db = getFirestore(app);
+
+  // UI references
   const input = document.getElementById('q');
   const form = document.getElementById('searchForm');
   const sugList = document.getElementById('suggestionsList');
+  const loginBtn = document.getElementById('loginBtn');
+
+  // Modal refs
+  const deleteModal = document.getElementById('deleteModal');
+  const modalHistoryName = document.getElementById('modalHistoryName');
+  const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+  const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
 
   let debounceTimer = null;
-  let lastCallbackName = null;
   let activeIndex = -1;
 
-  // LocalStorage history
-  function getHistory(){
-    try { return JSON.parse(localStorage.getItem('searchHistory') || '[]'); }
-    catch(e) { return []; }
-  }
-  function saveHistory(term){
-    if(!term.trim()) return;
-    let history = getHistory().filter(x => x.toLowerCase() !== term.toLowerCase());
-    history.unshift(term);
-    if(history.length > 20) history = history.slice(0,20);
-    localStorage.setItem('searchHistory', JSON.stringify(history));
-  }
-  function removeFromHistory(term){
+  let currentDeletingValue = null;
+  let currentDeletingLi = null;
+  let currentUser = null;
+
+  // ========== Firestore helpers ==========
+  async function getHistoryFromFirestore(){
+    if(!currentUser) return [];
     try{
-      const history = getHistory().filter(x => x.toLowerCase() !== term.toLowerCase());
-      localStorage.setItem('searchHistory', JSON.stringify(history));
-    }catch(e){}
+      const dref = doc(db, 'users', currentUser.uid);
+      const snap = await getDoc(dref);
+      if(!snap.exists()) return [];
+      const data = snap.data();
+      return Array.isArray(data.items) ? data.items : [];
+    }catch(e){
+      console.error('Error reading history from Firestore', e);
+      return [];
+    }
   }
 
-  // Escape HTML for safety
+  async function saveHistoryToFirestore(term){
+    if(!term || !term.trim()) return;
+    // If not signed in, trigger sign-in flow
+    if(!currentUser){
+      try {
+        await signInWithPopup(auth, provider);
+        // onAuthStateChanged will update currentUser
+      } catch(err){
+        console.error('Sign in required to save history', err);
+        alert('Please sign in with Google to save search history to your account.');
+        return;
+      }
+    }
+
+    try{
+      const dref = doc(db, 'users', currentUser.uid);
+      const snap = await getDoc(dref);
+      let items = [];
+      if(snap.exists() && Array.isArray(snap.data().items)){
+        items = snap.data().items.slice();
+      }
+      // remove case-insensitive duplicates
+      items = items.filter(x => x.toLowerCase() !== term.toLowerCase());
+      items.unshift(term);
+      if(items.length > 20) items = items.slice(0,20);
+      await setDoc(dref, { items }, { merge: true });
+    }catch(e){
+      console.error('Error saving history to Firestore', e);
+    }
+  }
+
+  async function removeFromHistoryInFirestore(term){
+    if(!currentUser) return;
+    try{
+      const dref = doc(db, 'users', currentUser.uid);
+      const snap = await getDoc(dref);
+      let items = [];
+      if(snap.exists() && Array.isArray(snap.data().items)){
+        items = snap.data().items.slice();
+      }
+      const filtered = items.filter(x => x.toLowerCase() !== term.toLowerCase());
+      await setDoc(dref, { items: filtered }, { merge: true });
+    }catch(e){
+      console.error('Error removing history from Firestore', e);
+    }
+  }
+
+  // ========== UI and suggestions logic ==========
   function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-  // Clear suggestions
   function clearSuggestions(){
     sugList.innerHTML = '';
     sugList.hidden = true;
     activeIndex = -1;
   }
 
-  // Merge and show suggestions (local + Google)
-  function showSuggestions(list){
+  // Render suggestions array of objects: { text, saved: boolean }
+  function renderSuggestions(items){
     sugList.innerHTML = '';
-    if(!list.length){ clearSuggestions(); return; }
+    if(!items || !items.length){ clearSuggestions(); return; }
 
-    list.forEach((text, i) => {
+    items.forEach((obj, i) => {
+      const text = obj.text;
+      const saved = !!obj.saved;
+
       const li = document.createElement('li');
       li.setAttribute('role','option');
       li.dataset.index = i;
-      li.innerHTML = '<span class="num">'+(i+1)+'</span><span class="txt">'+escapeHtml(text)+'</span>';
+
+      // left: number + text, right: saved indicator (clock image) if saved
+      li.innerHTML = `
+        <div class="left">
+          <span class="num">${i+1}</span>
+          <span class="txt">${escapeHtml(text)}</span>
+        </div>
+        <div class="saved-indicator" aria-hidden="${saved ? 'false' : 'true'}">
+          ${ saved ? '<img src="clock_64x64.png" alt="saved">' : '' }
+        </div>
+      `;
+
       li.addEventListener('click', ()=>{
         input.value = text;
         clearSuggestions();
@@ -392,12 +509,11 @@ body {
       });
 
       // Long-press handling for delete confirmation
-      (function attachLongPressHandlers(item, value){
+      (function attachLongPressHandlers(item, value, isSaved){
         let pressTimer = null;
         const longPressDuration = 600; // ms
 
         const startPress = (e) => {
-          // ignore right-click and such
           if (e.type === 'mousedown' && e.button !== 0) return;
           pressTimer = setTimeout(()=> {
             openDeleteModal(value, item);
@@ -413,9 +529,8 @@ body {
         item.addEventListener('mousedown', startPress);
         item.addEventListener('mouseup', cancelPress);
         item.addEventListener('mouseleave', cancelPress);
-        // prevent context menu on long-press for nicer UX
         item.addEventListener('contextmenu', (ev)=>{ ev.preventDefault(); }, {passive:false});
-      })(li, text);
+      })(li, text, saved);
 
       sugList.appendChild(li);
     });
@@ -430,6 +545,7 @@ body {
       items[activeIndex].scrollIntoView({block:'nearest'});
     }
   }
+
   input.addEventListener('keydown', function(e){
     const items = sugList.querySelectorAll('li');
     if(sugList.hidden) return;
@@ -442,26 +558,54 @@ body {
     else if(e.key==='Escape'){ clearSuggestions(); }
   });
 
-  // JSONP Google suggestions
+  // JSONP Google suggestions + Firestore merge (produces objects with saved flag)
   function requestGoogleSuggestions(query){
     if(!query || !query.trim()){ return; }
 
     const cbName = 'gs_cb_'+Date.now()+'_'+Math.floor(Math.random()*1000);
-    lastCallbackName = cbName;
+    let scriptEl = null;
 
-    window[cbName] = function(data){
-      let googleSugs = (Array.isArray(data) && Array.isArray(data[1])) ? data[1] : [];
-      // Merge with local suggestions (remove duplicates)
-      const localSugs = getHistory().filter(t => t.toLowerCase().includes(query.toLowerCase()));
-      const merged = [...new Set([...localSugs, ...googleSugs])].slice(0,20);
-      showSuggestions(merged);
+    window[cbName] = async function(data){
+      try{
+        let googleSugs = (Array.isArray(data) && Array.isArray(data[1])) ? data[1] : [];
+        // dedupe google suggestions preserving order
+        const seen = new Set();
+        googleSugs = googleSugs.filter(s => {
+          const k = String(s).toLowerCase();
+          if(seen.has(k)) return false;
+          seen.add(k);
+          return true;
+        });
 
-      // cleanup
-      try{ delete window[cbName]; } catch(e){ window[cbName]=undefined; }
-      if(scriptEl && scriptEl.parentNode) scriptEl.parentNode.removeChild(scriptEl);
+        const stored = await getHistoryFromFirestore();
+        const storedLowerSet = new Set((stored||[]).map(x => x.toLowerCase()));
+
+        // Merge: stored matching query first, then google suggestions not duplicated
+        const localMatches = (stored||[]).filter(t => t.toLowerCase().includes(query.toLowerCase()));
+        const merged = [];
+
+        // add local matches (marked saved)
+        localMatches.forEach(t => merged.push({ text: t, saved: true }));
+
+        // add google suggestions, mark saved if present in stored
+        googleSugs.forEach(gs => {
+          const lower = String(gs).toLowerCase();
+          // skip if already added (from localMatches)
+          if(merged.some(it => it.text.toLowerCase() === lower)) return;
+          merged.push({ text: gs, saved: storedLowerSet.has(lower) });
+        });
+
+        // limit to 20
+        renderSuggestions(merged.slice(0,20));
+      }catch(e){
+        console.error(e);
+      } finally {
+        try{ delete window[cbName]; } catch(e){ window[cbName]=undefined; }
+        if(scriptEl && scriptEl.parentNode) scriptEl.parentNode.removeChild(scriptEl);
+      }
     };
 
-    const scriptEl = document.createElement('script');
+    scriptEl = document.createElement('script');
     scriptEl.src = 'https://www.google.com/complete/search?client=firefox&callback='+cbName+'&q='+encodeURIComponent(query);
     document.body.appendChild(scriptEl);
   }
@@ -470,15 +614,27 @@ body {
   function debounce(fn,delay){ return function(...args){ clearTimeout(debounceTimer); debounceTimer=setTimeout(()=>fn.apply(this,args),delay); } }
   const debouncedRequest = debounce(()=>{ requestGoogleSuggestions(input.value.trim()); }, 180);
 
-  // Input event
   input.addEventListener('input', ()=>{
     activeIndex=-1;
     debouncedRequest();
   });
 
-  // Form submit saves to local
-  form.addEventListener('submit', ()=>{
-    saveHistory(input.value.trim());
+  // Show user's saved history when input focuses and is empty (all marked saved)
+  input.addEventListener('focus', async ()=>{
+    const q = input.value.trim();
+    if(q) return;
+    const items = await getHistoryFromFirestore();
+    if(items && items.length) {
+      const objs = items.slice(0,20).map(t => ({ text: t, saved: true }));
+      renderSuggestions(objs);
+    }
+  });
+
+  // Form submit saves to Firestore (not localStorage)
+  form.addEventListener('submit', async (e)=>{
+    // save to firestore; if user not signed-in, will prompt
+    await saveHistoryToFirestore(input.value.trim());
+    // allow normal submit to proceed (navigates to Google search)
   });
 
   // Click outside closes suggestions
@@ -487,22 +643,12 @@ body {
   });
 
   // ====== Delete modal logic (added) ======
-  const deleteModal = document.getElementById('deleteModal');
-  const modalHistoryName = document.getElementById('modalHistoryName');
-  const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-  const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
-
-  let currentDeletingValue = null;
-  let currentDeletingLi = null;
-
   function openDeleteModal(value, liElement){
     currentDeletingValue = value;
     currentDeletingLi = liElement;
     modalHistoryName.textContent = value;
     deleteModal.style.display = 'flex';
     deleteModal.setAttribute('aria-hidden','false');
-
-    // focus the cancel button for safety / keyboard
     cancelDeleteBtn.focus();
   }
 
@@ -513,19 +659,23 @@ body {
     deleteModal.setAttribute('aria-hidden','true');
   }
 
-  confirmDeleteBtn.addEventListener('click', ()=>{
+  confirmDeleteBtn.addEventListener('click', async ()=>{
     if(!currentDeletingValue) { closeDeleteModal(); return; }
-    // Remove from local storage history if present
-    removeFromHistory(currentDeletingValue);
+    await removeFromHistoryInFirestore(currentDeletingValue);
 
-    // Remove the li from suggestions UI if present
+    // Update UI: if currentDeletingLi exists, remove it; otherwise refresh visible suggestions
     if(currentDeletingLi && currentDeletingLi.parentNode){
       currentDeletingLi.parentNode.removeChild(currentDeletingLi);
+      // if list empty now, hide
+      if(!sugList.querySelectorAll('li').length) clearSuggestions();
     } else {
-      // fallback: rebuild suggestions from current input
       const query = input.value.trim();
       if(query) requestGoogleSuggestions(query);
-      else clearSuggestions();
+      else {
+        const items = await getHistoryFromFirestore();
+        if(items && items.length) renderSuggestions(items.slice(0,20).map(t => ({ text: t, saved: true })));
+        else clearSuggestions();
+      }
     }
 
     closeDeleteModal();
@@ -545,34 +695,7 @@ body {
     if(e.key === 'Escape' && deleteModal.style.display === 'flex') closeDeleteModal();
   });
 
-})();
-</script>
-
-<!-- ====== Firebase Google Login (module) ====== -->
-<script type="module">
-  // Firebase JS SDK v10 (module)
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } 
-    from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
-
-  // তোমার Firebase project config
-  const firebaseConfig = {
-    apiKey: "AIzaSyD7sZQDSeGYRmXj1v2MD8OB4OtpxZNgY9Q",
-    authDomain: "kiwi-brower-user.firebaseapp.com",
-    projectId: "kiwi-brower-user",
-    storageBucket: "kiwi-brower-user.firebasestorage.app",
-    messagingSenderId: "221131749871",
-    appId: "1:221131749871:web:8ea207da21e9b7aec3de1a",
-    measurementId: "G-Z6P6NNLX64"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const provider = new GoogleAuthProvider();
-
-  const loginBtn = document.getElementById('loginBtn');
-
-  // ক্লিক করলে লগইন বা লগআউট
+  // ====== Auth / login button logic (mirrors original behavior) ======
   loginBtn.addEventListener('click', async () => {
     const user = auth.currentUser;
     try {
@@ -587,48 +710,56 @@ body {
     }
   });
 
-  // লগইন স্টেট অনুযায়ী বাটনের টেক্সট পরিবর্তন
-  onAuthStateChanged(auth, (user) => {
-  if (user) {
-    const name = user.displayName || user.email || 'User';
-    const photo = user.photoURL;
+  onAuthStateChanged(auth, async (user) => {
+    currentUser = user;
+    if (user) {
+      const name = user.displayName || user.email || 'User';
+      const photo = user.photoURL;
 
-    loginBtn.innerHTML = `
-      <img src="${photo}" alt="${name}" 
-           style="
-             width:36px;
-             height:36px;
-             border-radius:50%;
-             object-fit:cover;
-             display:block;
-             border:2px solid rgba(255,255,255,0.5);
-             box-shadow:0 0 8px rgba(0,0,0,0.3);
-           ">
-    `;
-    loginBtn.style.background = 'transparent';
-    loginBtn.style.padding = '0';
-    loginBtn.style.border = 'none';
-    loginBtn.title = name;
+      loginBtn.innerHTML = `
+        <img src="${photo}" alt="${name}" 
+             style="
+               width:36px;
+               height:36px;
+               border-radius:50%;
+               object-fit:cover;
+               display:block;
+               border:2px solid rgba(255,255,255,0.5);
+               box-shadow:0 0 8px rgba(0,0,0,0.3);
+             ">
+      `;
+      loginBtn.style.background = 'transparent';
+      loginBtn.style.padding = '0';
+      loginBtn.style.border = 'none';
+      loginBtn.title = name;
 
-    // ক্লিক করলে লগআউট
-    loginBtn.onclick = async () => {
-      try { await signOut(auth); } 
-      catch (err) { alert('Logout failed: ' + err.message); }
-    };
-  } else {
-    // লগআউট বা লগইন না থাকলে আগের মতো Login বাটন দেখাবে
-    loginBtn.textContent = 'Login';
-    loginBtn.style.background = 'linear-gradient(180deg, #2c98ff, #1876ff)';
-    loginBtn.style.border = 'none';
-    loginBtn.style.padding = '10px 14px';
-    loginBtn.title = '';
-    loginBtn.onclick = async () => {
-      try { await signInWithPopup(auth, provider); } 
-      catch (err) { alert('Login failed: ' + err.message); }
-    };
-  }
-});
+      // ক্লিক করলে লগআউট
+      loginBtn.onclick = async () => {
+        try { await signOut(auth); } 
+        catch (err) { alert('Logout failed: ' + err.message); }
+      };
+    } else {
+      // লগআউট বা লগইন না থাকলে আগের মতো Login বাটন দেখাবে
+      loginBtn.textContent = 'Login';
+      loginBtn.style.background = 'linear-gradient(180deg, #2c98ff, #1876ff)';
+      loginBtn.style.border = 'none';
+      loginBtn.style.padding = '10px 14px';
+      loginBtn.title = '';
+      loginBtn.onclick = async () => {
+        try { await signInWithPopup(auth, provider); } 
+        catch (err) { alert('Login failed: ' + err.message); }
+      };
+    }
+
+    // If input is focused, refresh visible suggestions from user's history
+    if(document.activeElement === input){
+      const q = input.value.trim();
+      if(!q){
+        const items = await getHistoryFromFirestore();
+        if(items && items.length) renderSuggestions(items.slice(0,20).map(t => ({ text: t, saved: true })));
+      }
+    }
+  });
 </script>
-
 </body>
 </html>
