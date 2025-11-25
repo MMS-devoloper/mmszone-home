@@ -534,27 +534,50 @@ input.addEventListener('input', (e)=> {
     else if(e.key==='Escape'){ clearSuggestions(); }
   });
 
-  // JSONP Google suggestions + Firestore merge (produces objects with saved flag)
-  function requestGoogleSuggestions(query){
-    if(!query || !query.trim()){ return; }
+  // Cached history
+let cachedHistory = [];
 
-    const cbName = 'gs_cb_'+Date.now()+'_'+Math.floor(Math.random()*1000);
-    let scriptEl = null;
+// Login state change হলে history prefetch
+onAuthStateChanged(auth, user => {
+  currentUser = user;
+  if(user){
+    getHistoryFromFirestore().then(items => cachedHistory = items || []);
+  } else {
+    cachedHistory = [];
+  }
+});
 
-    window[cbName] = async function(data){
-      try{
-        let googleSugs = (Array.isArray(data) && Array.isArray(data[1])) ? data[1] : [];
-        // dedupe google suggestions preserving order
-        const seen = new Set();
-        googleSugs = googleSugs.filter(s => {
-          const k = String(s).toLowerCase();
-          if(seen.has(k)) return false;
-          seen.add(k);
-          return true;
-        });
+// Optimized requestGoogleSuggestions
+function requestGoogleSuggestions(query){
+  if(!query || !query.trim()) return;
 
-        const stored = await getHistoryFromFirestore();
-        const storedLowerSet = new Set((stored||[]).map(x => x.toLowerCase()));
+  const cbName = 'gs_cb_' + Date.now() + '_' + Math.floor(Math.random()*1000);
+  let scriptEl = null;
+
+  window[cbName] = function(data){
+    try{
+      // Google suggestions
+      let googleSugs = (Array.isArray(data) && Array.isArray(data[1])) ? data[1].map(s => ({ text: s[0], saved: false })) : [];
+
+      // Remove duplicates between Google suggestions and cached history
+      const merged = [
+        ...cachedHistory.map(h => ({ text: h, saved: true })),
+        ...googleSugs.filter(g => !cachedHistory.some(h => h.toLowerCase() === g.text.toLowerCase()))
+      ];
+
+      renderSuggestions(merged);
+    } catch(e){
+      console.error(e);
+    }
+
+    if(scriptEl) document.head.removeChild(scriptEl);
+    delete window[cbName];
+  };
+
+  scriptEl = document.createElement('script');
+  scriptEl.src = `https://suggestqueries.google.com/complete/search?client=firefox&hl=en&q=${encodeURIComponent(query)}&callback=${cbName}`;
+  document.head.appendChild(scriptEl);
+}
 
         // Merge: stored matching query first, then google suggestions not duplicated
         const localMatches = (stored||[]).filter(t => t.toLowerCase().includes(query.toLowerCase()));
