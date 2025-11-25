@@ -363,7 +363,6 @@ font-weight: 700;
   <button id="confirmDeleteBtn" class="btn-danger" type="button">Yes</button>
    </div>
   </div>
-</d>
 
 <!-- ================== 🔍 Combined Firestore-backed History + Google Suggestions (module) ================== -->
 <script type="module">
@@ -408,66 +407,43 @@ font-weight: 700;
   let currentUser = null;
 
   // ========== Firestore helpers ==========
-  async function getHistoryFromFirestore(){
-    if(!currentUser) return [];
-    try{
-      const dref = doc(db, 'users', currentUser.uid);
-      const snap = await getDoc(dref);
-      if(!snap.exists()) return [];
-      const data = snap.data();
-      return Array.isArray(data.items) ? data.items : [];
-    }catch(e){
-      console.error('Error reading history from Firestore', e);
-      return [];
-    }
-  }
+  async function fetchSuggestions(query) {
+  if (!query.trim()) return;
 
-  async function saveHistoryToFirestore(term){
-    if(!term || !term.trim()) return;
-    // If not signed in, trigger sign-in flow
-    if(!currentUser){
-      try {
-        await signInWithPopup(auth, provider);
-        // onAuthStateChanged will update currentUser
-      } catch(err){
-        console.error('Sign in required to save history', err);
-        alert('Please sign in with Google to save search history to your account.');
-        return;
-      }
+  // JSONP callback নাম তৈরি
+  const cbName = 'gs_cb_' + Date.now() + '_' + Math.floor(Math.random()*1000);
+
+  window[cbName] = function(data) {
+    // Google suggestions
+    let googleSugs = Array.isArray(data[1]) ? data[1].map(s => ({ text: s[0], saved: false })) : [];
+
+    if(currentUser) {
+      // লগ ইন থাকলে Firestore history merge করো
+      getHistoryFromFirestore().then(history => {
+        const histSugs = history.map(h => ({ text: h, saved: true }));
+        const merged = [...histSugs, ...googleSugs.filter(g => !history.includes(g.text))];
+        renderSuggestions(merged);
+      });
+    } else {
+      // লগ আউট থাকলে শুধু Google suggestions দেখাও
+      renderSuggestions(googleSugs);
     }
 
-    try{
-      const dref = doc(db, 'users', currentUser.uid);
-      const snap = await getDoc(dref);
-      let items = [];
-      if(snap.exists() && Array.isArray(snap.data().items)){
-        items = snap.data().items.slice();
-      }
-      // remove case-insensitive duplicates
-      items = items.filter(x => x.toLowerCase() !== term.toLowerCase());
-      items.unshift(term);
-      if(items.length > 20) items = items.slice(0,20);
-      await setDoc(dref, { items }, { merge: true });
-    }catch(e){
-      console.error('Error saving history to Firestore', e);
-    }
-  }
+    // cleanup
+    document.head.removeChild(script);
+    delete window[cbName];
+  };
 
-  async function removeFromHistoryInFirestore(term){
-    if(!currentUser) return;
-    try{
-      const dref = doc(db, 'users', currentUser.uid);
-      const snap = await getDoc(dref);
-      let items = [];
-      if(snap.exists() && Array.isArray(snap.data().items)){
-        items = snap.data().items.slice();
-      }
-      const filtered = items.filter(x => x.toLowerCase() !== term.toLowerCase());
-      await setDoc(dref, { items: filtered }, { merge: true });
-    }catch(e){
-      console.error('Error removing history from Firestore', e);
-    }
-  }
+  const script = document.createElement('script');
+  script.src = `https://suggestqueries.google.com/complete/search?client=firefox&hl=en&q=${encodeURIComponent(query)}&callback=${cbName}`;
+  document.head.appendChild(script);
+}
+
+// input ইভেন্টে debounce সহ কল
+input.addEventListener('input', (e)=> {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(()=> fetchSuggestions(e.target.value), 250);
+});
 
   // ========== UI and suggestions logic ==========
   function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -761,5 +737,6 @@ font-weight: 700;
     }
   });
 </script>
+</div>
 </body>
 </html>
